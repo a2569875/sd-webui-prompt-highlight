@@ -656,13 +656,8 @@ let prompthighl = {};
 			self.editor.setTheme("ace/theme/" + selectedTheme);
 		}})(this));
 
-
-		this.smyles_dragbar.style.cursor = "row-resize";
+		this.smyles_dragbar.classList.add("ace_resize-bar");
 		this.smyles_dragbar.style.opacity = "1";
-		this.smyles_dragbar.style.position = "absolute";
-		this.smyles_dragbar.style.width = "100%";
-		this.smyles_dragbar.style.height = "10px";
-		this.smyles_dragbar.style.zIndex = 100;
 		
 		this.textArea.parentNode.prepend(this.smyles_dragbar);
 		// replace textarea with the editor
