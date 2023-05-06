@@ -1,0 +1,97 @@
+.oo-ui-icon-markup, .mw-ui-icon-markup::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E markup %3C/title%3E%3Cpath d=%22M6.5 3.5 0 10l1.5 1.5 5 5L8 15l-5-5 5-5zm7 0L12 5l5 5-5 5 1.5 1.5L20 10z%22/%3E%3C/svg%3E");
+}
+.oo-ui-image-progressive.oo-ui-icon-markup, .mw-ui-icon-markup-progressive::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E markup %3C/title%3E%3Cg fill=%22%2336c%22%3E%3Cpath d=%22M6.5 3.5 0 10l1.5 1.5 5 5L8 15l-5-5 5-5zm7 0L12 5l5 5-5 5 1.5 1.5L20 10z%22/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.oo-ui-icon-pilcrow {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E %3Ctitle%3E pilcrow %3C/title%3E %3Cpath d=%22m 7.388022%2C2 h 9.278109 v 2 h -2 V 18 H 12.666277 V 4.0001848 H 9.333065 V 18 H 7.333138 V 9.990386 C 5.7072798%2C9.883573 4.2194862%2C9.482099 3.3271547%2C8.787866 2.4423848%2C8.087294 2%2C7.156403 2%2C5.9949814 2%2C4.7959481 2.4915387%2C3.8302979 3.4746161%2C3.0981365 4.4576935%2C2.365975 5.7621616%2C2 7.388022%2C2 Z%22 /%3E %3C/svg%3E");
+}
+.oo-ui-image-progressive.oo-ui-icon-pilcrow {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E pilcrow %3C/title%3E%3Cg fill=%22%2336c%22%3E %3Cpath d=%22m 7.388022%2C2 h 9.278109 v 2 h -2 V 18 H 12.666277 V 4.0001848 H 9.333065 V 18 H 7.333138 V 9.990386 C 5.7072798%2C9.883573 4.2194862%2C9.482099 3.3271547%2C8.787866 2.4423848%2C8.087294 2%2C7.156403 2%2C5.9949814 2%2C4.7959481 2.4915387%2C3.8302979 3.4746161%2C3.0981365 4.4576935%2C2.365975 5.7621616%2C2 7.388022%2C2 Z%22/%3E %3C/g%3E%3C/svg%3E");
+}
+
+.oo-ui-icon-promptSearch, .mw-ui-icon-promptSearch::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E article search %3C/title%3E%3Cpath d=%22M12.43 14.34A5 5 0 0 1 10 15a5 5 0 1 1 3.95-2L17 16.09V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 1.45-.63z%22/%3E%3Ccircle cx=%2210%22 cy=%2210%22 r=%223%22/%3E%3C/svg%3E");
+}
+
+.ace_color.data-color{
+    position: relative;
+}
+.oo-ui-image-progressive{
+    background-color: rgba(0,24,173,0.08235294);
+}
+
+.ace_color.data-color{
+    position: relative;
+}
+
+.ace_color.data-color::before{
+    content: '';
+    background-color: var(--data-color);
+    position: absolute;
+    left: -10px;
+    width: 10px;
+    height: 10px;
+    bottom: calc(50% - 5px);
+    border: solid 1px;
+}
+
+.oo-ui-weight-coloring {
+    background-color: rgba(255, 184, 194, 0.7);
+}
+
+.sd-prompt-weight-up-lvl1 {
+    background-color: rgba(255, 184, 194, 0.1);
+}
+.sd-prompt-weight-up-lvl2 {
+    background-color: rgba(255, 184, 194, 0.2);
+}
+.sd-prompt-weight-up-lvl3 {
+    background-color: rgba(255, 184, 194, 0.3);
+}
+.sd-prompt-weight-up-lvl4 {
+    background-color: rgba(255, 184, 194, 0.4);
+}
+.sd-prompt-weight-up-lvl5 {
+    background-color: rgba(255, 184, 194, 0.5);
+}
+.sd-prompt-weight-down-lvl1 {
+    background-color: rgba(135, 206, 250, 0.1);
+}
+.sd-prompt-weight-down-lvl2 {
+    background-color: rgba(135, 206, 250, 0.2);
+}
+.sd-prompt-weight-down-lvl3 {
+    background-color: rgba(135, 206, 250, 0.3);
+}
+.sd-prompt-weight-down-lvl4 {
+    background-color: rgba(135, 206, 250, 0.4);
+}
+.sd-prompt-weight-down-lvl5 {
+    background-color: rgba(135, 206, 250, 0.5);
+}
+
+.oo-ui-iconElement-icon {
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    min-width: 20px;
+    width: 1.42857143em;
+    min-height: 20px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.oo-ui-iconElement-icon:hover {
+    background-color: rgba(0,24,73,0.08235294);
+}
+
+.oo-ui-frame {
+    min-height: 32px;
+    min-width: 32px;
+    display: inline-block;
+}
