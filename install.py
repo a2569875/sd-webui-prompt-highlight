@@ -115,6 +115,9 @@ def init_dev():
     file_path = os.path.dirname(os.path.realpath(__file__))
     ace_path = os.path.join(file_path, "lib", "ace")
     mode_path = os.path.join(ace_path, "src", "mode")
+    lib_path = os.path.join(file_path, "lib")
+    if not os.path.exists(lib_path):
+        os.makedirs(lib_path)
     git_clone("https://github.com/ajaxorg/ace.git", ace_path, "ace")
     with cd(ace_path):
         run(f'npm install', f"installing ace...", f"Couldn't install ace")
@@ -130,3 +133,5 @@ def init_dev():
 
 if "--dev" in sys.argv:
     init_dev()
+else:
+    print("load sd-webui-prompt-highlight for WebUI.")
