@@ -824,6 +824,27 @@ let prompthighl = {};
 		}
 	}
 	onUiLoaded(() => {
+		const check_css = document.querySelectorAll("link");
+		let find_css = false;
+		let req_str = ext_path.split("=");
+		req_str = ((req_str.length<=1)?req_str:req_str.slice(1)).join("=").replace(/[\\\/]+$/g,"").split(/[\\\/]/);
+		req_str = (req_str.length<=1)?req_str[0]:req_str.pop();
+		const re_main_css = new RegExp("sd-webui-prompt-highlight".replace(/\-/g,"\\-")+"[\\\\\\/]style\\.css");
+		for(const css_node of check_css){
+			if(re_main_css.test(css_node.getAttribute("href"))){
+				find_css = true;
+				break;
+			}
+		}
+		if(!find_css){
+			var head  = document.getElementsByTagName('head')[0];
+			var link  = document.createElement('link');
+			link.rel  = 'stylesheet';
+			link.type = 'text/css';
+			link.href = [ext_path, "style.css"].join("/");
+			link.media = 'all';
+			head.appendChild(link);
+		}
 		extranetworkList = getAllExtranetwork();
 		update_extranetworkTable();
 		for(let update_btn of document.querySelectorAll("#txt2img_extra_refresh, #img2img_extra_refresh")){
