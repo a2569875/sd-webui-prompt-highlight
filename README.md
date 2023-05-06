@@ -34,7 +34,7 @@ If you want to develop the project, you need to prepare [Node.js](https://nodejs
 
 After installing Node.js, run the following command in this directory:
 ```
-python install.py
+python install.py --dev
 ```
 to complete the installation.
 

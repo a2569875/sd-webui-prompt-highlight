@@ -31,7 +31,7 @@ https://github.com/a2569875/sd-webui-prompt-highlight.git
 
 安裝完Node.js之後，在這層目錄執行
 ```
-python install.py
+python install.py --dev
 ```
 即完成安裝
 ## 編譯
