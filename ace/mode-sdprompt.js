@@ -1,74 +1,7 @@
-define("ace/ext/themelist",["require","exports","module"], function(require, exports, module){/**
- * Generates a list of themes available when ace was built.
- * @fileOverview Generates a list of themes available when ace was built.
- * @author <a href="mailto:matthewkastor@gmail.com">
- *  Matthew Christopher Kastor-Inare III </a><br />
- *  ☭ Hial Atropa!! ☭
- */
-"use strict";
-var themeData = [
-    ["Chrome"],
-    ["Clouds"],
-    ["Crimson Editor"],
-    ["Dawn"],
-    ["Dreamweaver"],
-    ["Eclipse"],
-    ["GitHub"],
-    ["IPlastic"],
-    ["Solarized Light"],
-    ["TextMate"],
-    ["Tomorrow"],
-    ["XCode"],
-    ["Kuroir"],
-    ["KatzenMilch"],
-    ["SQL Server", "sqlserver", "light"],
-    ["Ambiance", "ambiance", "dark"],
-    ["Chaos", "chaos", "dark"],
-    ["Clouds Midnight", "clouds_midnight", "dark"],
-    ["Dracula", "", "dark"],
-    ["Cobalt", "cobalt", "dark"],
-    ["Gruvbox", "gruvbox", "dark"],
-    ["Green on Black", "gob", "dark"],
-    ["idle Fingers", "idle_fingers", "dark"],
-    ["krTheme", "kr_theme", "dark"],
-    ["Merbivore", "merbivore", "dark"],
-    ["Merbivore Soft", "merbivore_soft", "dark"],
-    ["Mono Industrial", "mono_industrial", "dark"],
-    ["Monokai", "monokai", "dark"],
-    ["Nord Dark", "nord_dark", "dark"],
-    ["One Dark", "one_dark", "dark"],
-    ["Pastel on dark", "pastel_on_dark", "dark"],
-    ["Solarized Dark", "solarized_dark", "dark"],
-    ["Terminal", "terminal", "dark"],
-    ["Tomorrow Night", "tomorrow_night", "dark"],
-    ["Tomorrow Night Blue", "tomorrow_night_blue", "dark"],
-    ["Tomorrow Night Bright", "tomorrow_night_bright", "dark"],
-    ["Tomorrow Night 80s", "tomorrow_night_eighties", "dark"],
-    ["Twilight", "twilight", "dark"],
-    ["Vibrant Ink", "vibrant_ink", "dark"]
-];
-exports.themesByName = {};
-exports.themes = themeData.map(function (data) {
-    var name = data[1] || data[0].replace(/ /g, "_").toLowerCase();
-    var theme = {
-        caption: data[0],
-        theme: "ace/theme/" + name,
-        isDark: data[2] == "dark",
-        name: name
-    };
-    exports.themesByName[name] = theme;
-    return theme;
-});
-
-});
-
-define("ace/mode/python_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module){/*
- * TODO: python delimiters
- */
-"use strict";
+define("ace/mode/inside_python_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module){"use strict";
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-var PythonHighlightRules = function () {
+var inside_pythonHighlightRules = function () {
     var keywords = ("and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
         "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
         "raise|return|try|while|with|yield|async|await|nonlocal");
@@ -181,10 +114,10 @@ var PythonHighlightRules = function () {
                 regex: ",|:|;|\\->|\\+=|\\-=|\\*=|\\/=|\\/\\/=|%=|@=|&=|\\|=|^=|>>=|<<=|\\*\\*="
             }, {
                 token: "paren.lparen",
-                regex: "[\\[\\(\\{]"
+                regex: "\\\\?[\\[\\(\\{]"
             }, {
                 token: "paren.rparen",
-                regex: "[\\]\\)\\}]"
+                regex: "\\\\?[\\]\\)\\}]"
             }, {
                 token: ["keyword", "text", "entity.name.function"],
                 regex: "(def|class)(\\s+)([\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w]+)"
@@ -195,7 +128,7 @@ var PythonHighlightRules = function () {
                 include: "constants"
             }],
         "qqstring3": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -205,7 +138,7 @@ var PythonHighlightRules = function () {
                 defaultToken: "string"
             }],
         "qstring3": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -215,7 +148,7 @@ var PythonHighlightRules = function () {
                 defaultToken: "string"
             }],
         "qqstring": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -229,7 +162,7 @@ var PythonHighlightRules = function () {
                 defaultToken: "string"
             }],
         "qstring": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -279,7 +212,7 @@ var PythonHighlightRules = function () {
                 defaultToken: "string"
             }],
         "fqqstring3": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -287,13 +220,13 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
             }],
         "fqstring3": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -301,13 +234,13 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
             }],
         "fqqstring": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -319,13 +252,13 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
             }],
         "fqstring": [{
-                token: "constant.language.escape",
+                token: "constant.language.escape.charescape",
                 regex: stringEscape
             }, {
                 token: "string",
@@ -333,7 +266,7 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
@@ -344,7 +277,7 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
@@ -355,7 +288,7 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
@@ -370,7 +303,7 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
@@ -381,17 +314,17 @@ var PythonHighlightRules = function () {
                 next: "start"
             }, {
                 token: "paren.lparen",
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
                 defaultToken: "string"
             }],
         "fqstringParRules": [{
                 token: "paren.lparen",
-                regex: "[\\[\\(]"
+                regex: "\\\\?[\\[\\(]"
             }, {
                 token: "paren.rparen",
-                regex: "[\\]\\)]"
+                regex: "\\\\?[\\]\\)]"
             }, {
                 token: "string",
                 regex: "\\s+"
@@ -408,11 +341,11 @@ var PythonHighlightRules = function () {
                 include: "constants"
             }, {
                 token: 'paren.rparen',
-                regex: "}",
+                regex: "\\\\?\\}",
                 next: 'pop'
             }, {
                 token: 'paren.lparen',
-                regex: "{",
+                regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }],
         "constants": [{
@@ -437,16 +370,170 @@ var PythonHighlightRules = function () {
     };
     this.normalizeRules();
 };
-oop.inherits(PythonHighlightRules, TextHighlightRules);
-exports.PythonHighlightRules = PythonHighlightRules;
+oop.inherits(inside_pythonHighlightRules, TextHighlightRules);
+exports.inside_pythonHighlightRules = inside_pythonHighlightRules;
 
 });
 
-define("ace/mode/sdprompt_highlight_rules",["require","exports","module","ace/ext/themelist","ace/lib/oop","ace/mode/text_highlight_rules","ace/mode/python_highlight_rules"], function(require, exports, module){"use strict";
+define("ace/mode/inside_pythonic",["require","exports","module","ace/lib/oop","ace/mode/folding/fold_mode"], function(require, exports, module){"use strict";
+var oop = require("../lib/oop");
+var BaseFoldMode = require("./folding/fold_mode").FoldMode;
+var FoldMode = exports.FoldMode = function (markers) {
+    this.foldingStartMarker = new RegExp("(\\\\?[\\[{])(?:\\s*)$|\\\\?(" + markers + ")(?:\\s*)(?:#.*)?$");
+};
+oop.inherits(FoldMode, BaseFoldMode);
+(function () {
+    this.getFoldWidgetRange = function (session, foldStyle, row) {
+        var line = session.getLine(row);
+        var match = line.match(this.foldingStartMarker);
+        if (match) {
+            if (match[1])
+                return this.openingBracketBlock(session, match[1], row, match.index);
+            if (match[2])
+                return this.indentationBlock(session, row, match.index + match[2].length);
+            return this.indentationBlock(session, row);
+        }
+    };
+}).call(FoldMode.prototype);
+
+});
+
+define("ace/mode/inside_python",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/inside_python_highlight_rules","ace/mode/inside_pythonic","ace/range"], function(require, exports, module){"use strict";
+var oop = require("../lib/oop");
+var TextMode = require("./text").Mode;
+var InsidePythonHighlightRules = require("./inside_python_highlight_rules").inside_pythonHighlightRules;
+var InsidePythonFoldMode = require("./inside_pythonic").FoldMode;
+var Range = require("../range").Range;
+var Mode = function () {
+    this.HighlightRules = InsidePythonHighlightRules;
+    this.foldingRules = new InsidePythonFoldMode("\\:");
+    this.$behaviour = this.$defaultBehaviour;
+};
+oop.inherits(Mode, TextMode);
+(function () {
+    this.lineCommentStart = "#";
+    this.$pairQuotesAfter = {
+        "'": /[ruf]/i,
+        '"': /[ruf]/i
+    };
+    this.getNextLineIndent = function (state, line, tab) {
+        var indent = this.$getIndent(line);
+        var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
+        var tokens = tokenizedLine.tokens;
+        if (tokens.length && tokens[tokens.length - 1].type == "comment") {
+            return indent;
+        }
+        if (state == "start") {
+            var match = line.match(/^.*[\{\(\[:]\s*$/);
+            if (match) {
+                indent += tab;
+            }
+        }
+        return indent;
+    };
+    var outdents = {
+        "pass": 1,
+        "return": 1,
+        "raise": 1,
+        "break": 1,
+        "continue": 1
+    };
+    this.checkOutdent = function (state, line, input) {
+        if (input !== "\r\n" && input !== "\r" && input !== "\n")
+            return false;
+        var tokens = this.getTokenizer().getLineTokens(line.trim(), state).tokens;
+        if (!tokens)
+            return false;
+        do {
+            var last = tokens.pop();
+        } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
+        if (!last)
+            return false;
+        return (last.type == "keyword" && outdents[last.value]);
+    };
+    this.autoOutdent = function (state, doc, row) {
+        row += 1;
+        var indent = this.$getIndent(doc.getLine(row));
+        var tab = doc.getTabString();
+        if (indent.slice(-tab.length) == tab)
+            doc.remove(new Range(row, indent.length - tab.length, row, indent.length));
+    };
+    this.$id = "ace/mode/inside_python";
+    this.snippetFileId = "ace/snippets/python";
+}).call(Mode.prototype);
+exports.Mode = Mode;
+
+});
+
+define("ace/ext/themelist",["require","exports","module"], function(require, exports, module){/**
+ * Generates a list of themes available when ace was built.
+ * @fileOverview Generates a list of themes available when ace was built.
+ * @author <a href="mailto:matthewkastor@gmail.com">
+ *  Matthew Christopher Kastor-Inare III </a><br />
+ *  ☭ Hial Atropa!! ☭
+ */
+"use strict";
+var themeData = [
+    ["Chrome"],
+    ["Clouds"],
+    ["Crimson Editor"],
+    ["Dawn"],
+    ["Dreamweaver"],
+    ["Eclipse"],
+    ["GitHub"],
+    ["IPlastic"],
+    ["Solarized Light"],
+    ["TextMate"],
+    ["Tomorrow"],
+    ["XCode"],
+    ["Kuroir"],
+    ["KatzenMilch"],
+    ["SQL Server", "sqlserver", "light"],
+    ["Ambiance", "ambiance", "dark"],
+    ["Chaos", "chaos", "dark"],
+    ["Clouds Midnight", "clouds_midnight", "dark"],
+    ["Dracula", "", "dark"],
+    ["Cobalt", "cobalt", "dark"],
+    ["Gruvbox", "gruvbox", "dark"],
+    ["Green on Black", "gob", "dark"],
+    ["idle Fingers", "idle_fingers", "dark"],
+    ["krTheme", "kr_theme", "dark"],
+    ["Merbivore", "merbivore", "dark"],
+    ["Merbivore Soft", "merbivore_soft", "dark"],
+    ["Mono Industrial", "mono_industrial", "dark"],
+    ["Monokai", "monokai", "dark"],
+    ["Nord Dark", "nord_dark", "dark"],
+    ["One Dark", "one_dark", "dark"],
+    ["Pastel on dark", "pastel_on_dark", "dark"],
+    ["Solarized Dark", "solarized_dark", "dark"],
+    ["Terminal", "terminal", "dark"],
+    ["Tomorrow Night", "tomorrow_night", "dark"],
+    ["Tomorrow Night Blue", "tomorrow_night_blue", "dark"],
+    ["Tomorrow Night Bright", "tomorrow_night_bright", "dark"],
+    ["Tomorrow Night 80s", "tomorrow_night_eighties", "dark"],
+    ["Twilight", "twilight", "dark"],
+    ["Vibrant Ink", "vibrant_ink", "dark"]
+];
+exports.themesByName = {};
+exports.themes = themeData.map(function (data) {
+    var name = data[1] || data[0].replace(/ /g, "_").toLowerCase();
+    var theme = {
+        caption: data[0],
+        theme: "ace/theme/" + name,
+        isDark: data[2] == "dark",
+        name: name
+    };
+    exports.themesByName[name] = theme;
+    return theme;
+});
+
+});
+
+define("ace/mode/sdprompt_highlight_rules",["require","exports","module","ace/ext/themelist","ace/lib/oop","ace/mode/text_highlight_rules","ace/mode/inside_python_highlight_rules"], function(require, exports, module){"use strict";
 require("../ext/themelist");
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-var PythonHighlightRules = require("./python_highlight_rules").PythonHighlightRules;
+var PythonHighlightRules = require("./inside_python_highlight_rules").inside_pythonHighlightRules;
 var prompt = {
     re: {
         extranetwork: {
@@ -484,8 +571,8 @@ var sdpromptHighlightRules = function () {
             { token: "invalid", regex: "\\]" },
             { token: "invalid", regex: "\\}" },
             { token: "text", regex: "\\s+" },
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
         ],
@@ -501,8 +588,8 @@ var sdpromptHighlightRules = function () {
             { token: "support.constant.color", regex: "((?<=[\\s_])|\\b)(" + supportConstantColor + ")((?=[\\s_])|\\b)" },
         ],
         "state.weight": [
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
             { token: "promptweight.keyword.operator", regex: ":", next: "state.weight.op" },
             { token: "comment", regex: /#.+$/ },
@@ -510,7 +597,7 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptweight" }
         ],
         "state.weight.op": [
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
             { token: "promptweight.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
             { token: "comment", regex: /#.+$/ },
@@ -518,8 +605,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptweight" }
         ],
         "state.wildcard": [
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptwildcardtemplate.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.wildcard.template" },
             { token: "promptwildcard.keyword.end", regex: prompt.re.wildcard.end, next: "pop" },
             { token: "promptwildcard.keyword.operator", regex: ":", next: "state.weight.op" },
@@ -528,8 +615,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptwildcard.keyword" }
         ],
         "state.wildcard.template": [
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptwildcardtemplate.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
             { token: "promptwildcardtemplate.keyword.operator", regex: "[:=]" },
             { token: "promptwildcardtemplate.keyword.operator", regex: "[~@]" },
@@ -537,8 +624,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptwildcardtemplate" }
         ],
         "state.variable": [
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptvariable.keyword.end", regex: prompt.re.promptvariable.end, next: "pop" },
             { token: "promptvariable.keyword.operator", regex: "[=\\!]" },
             { token: "promptvariable.keyword.operator", regex: "[~@]" },
@@ -548,8 +635,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptvariable" }
         ],
         "state.dynamicselection": [
-            { token: "constant.language.escape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "keyword", regex: prompt.re.dynamicselection.end, next: "pop" },
             { token: "keyword.operator", regex: "[:|\\|]" },
             { token: "keyword", regex: "\\$\\$" },
@@ -560,8 +647,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "dynamicselection" }
         ],
         "state.step": [
-            { token: "promptstep.keyword.operator", regex: "\\\\u0023", next: "supercmd" },
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "promptstep.keyword.operator.charescape", regex: "\\\\u0023", next: "supercmd" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
             { token: "promptstep.keyword.operator", regex: ":", next: "state.step.op" },
             { token: "promptstep.keyword.operator", regex: "\\|" },
@@ -570,7 +657,7 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptstep" }
         ],
         "state.step.op": [
-            { token: "constant.language.escape", regex: "\\\\", push: "state.escape" },
+            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
             { token: "promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
             { token: "promptstep.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
             { token: "promptstep.keyword.operator", regex: "\\|", next: "state.step.op" },
@@ -579,8 +666,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "promptstep" }
         ],
         "state.escape.unicode": [
-            { token: "constant.language.escape", regex: "\\d{4}", next: "pop" },
-            { defaultToken: "constant.language.escape" }
+            { token: "constant.language.escape.charescape", regex: "\\d{4}", next: "pop" },
+            { defaultToken: "constant.language.escape.charescape" }
         ],
         "supercmd": [
             { token: "keyword", regex: "cmd\\\\\\(", next: "python-start" },
@@ -589,8 +676,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "supercmd" }
         ],
         "state.escape": [
-            { token: "constant.language.escape", regex: ".", next: "pop" },
-            { defaultToken: "text" }
+            { token: "constant.language.escape.charescape", regex: ".", next: "pop" },
+            { defaultToken: "constant.language.escape.charescape" }
         ],
         "extranetwork": [
             { token: "extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
@@ -614,7 +701,7 @@ var sdpromptHighlightRules = function () {
         ],
     };
     this.embedRules(PythonHighlightRules, "python-", [
-        { token: "keyword", regex: "\\\\\\)", next: "supercmd" },
+        { token: "keyword", regex: "\\\\\\)(?=\\s*[\\:#\\[\\]])", next: "supercmd" },
     ]);
     this.normalizeRules();
 };
@@ -739,14 +826,18 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-define("ace/mode/sdprompt",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/sdprompt_highlight_rules","ace/mode/folding/cstyle"], function(require, exports, module){"use strict";
+define("ace/mode/sdprompt",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/inside_python","ace/mode/sdprompt_highlight_rules","ace/mode/folding/cstyle"], function(require, exports, module){"use strict";
 var oop = require("../lib/oop");
 var TextMode = require("./text").Mode;
+var PythonMode = require("./inside_python").Mode;
 var HighlightRules = require("./sdprompt_highlight_rules").sdpromptHighlightRules;
 var FoldMode = require("./folding/cstyle").FoldMode;
 var Mode = function () {
     this.HighlightRules = HighlightRules;
     this.foldingRules = new FoldMode();
+    this.createModeDelegates({
+        "python-": PythonMode
+    });
 };
 oop.inherits(Mode, TextMode);
 (function () {

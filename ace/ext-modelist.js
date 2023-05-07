@@ -97,6 +97,7 @@ var supportedModes = {
     HTML_Elixir: ["eex|html.eex"],
     HTML_Ruby: ["erb|rhtml|html.erb"],
     INI: ["ini|conf|cfg|prefs"],
+    insidePython: ["isdpy"],
     Io: ["io"],
     Ion: ["ion"],
     Jack: ["jack"],

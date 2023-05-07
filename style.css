@@ -27,6 +27,17 @@
     position: relative;
 }
 
+.ace_charescape_data {
+    opacity: 1;
+}
+
+.ace_charescape_data::before {
+    content: var(--data-charescape);
+    position: absolute;
+    background-color: var(--data-background-color);
+    opacity: 0.7;
+}
+
 .ace_resize-bar {
     cursor: row-resize;
     position: absolute;

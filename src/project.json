@@ -1,0 +1,28 @@
+{
+    "files":[
+        {
+            "from":"sdprompt.js",
+            "to":"mode"
+        },
+        {
+            "from":"sdprompt_highlight_rules.js",
+            "to":"mode"
+        },
+        {
+            "from":"inside_python.js",
+            "to":"mode"
+        },
+        {
+            "from":"inside_python_highlight_rules.js",
+            "to":"mode"
+        },
+        {
+            "from":"inside_pythonic.js",
+            "to":"mode"
+        }
+    ],
+    "syntax_rules":[
+       {"name": "SDPrompt", "extension":"extension1|extension2"},
+       {"name": "insidePython", "extension":"isdpy"}
+    ]
+}
