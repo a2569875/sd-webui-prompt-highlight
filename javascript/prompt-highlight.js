@@ -381,6 +381,7 @@ let prompthighl = {};
 							let queue = [];
 							let child = [];
 							let store_layer = -1;
+							let target_pop_layer = -1;
 							for(let i=0; i<calc_layer; ++i){
 								let current = stack.pop();
 								while (current.type !== begin_pattern){
@@ -389,7 +390,7 @@ let prompthighl = {};
 									current = stack.pop();
 								}
 								if((current.parent_distance||0)>0 && store_layer < 0) store_layer = current.parent_distance;
-
+								if(target_pop_layer < 0)target_pop_layer = store_layer;
 								if(current.type === begin_pattern) {
 									if(current.element_list.length > 0){
 										child.push(data_list.length);
@@ -410,6 +411,9 @@ let prompthighl = {};
 							}
 							while(queue.length > 0)stack.push(queue.shift());
 							if(stack.length <= 0) break;
+							if(target_pop_layer < calc_layer){
+								stack[stack.length-1].parent_distance = calc_layer - target_pop_layer;
+							}
 							while(child.length > 0)stack[stack.length-1].child.push(child.shift());
 							continue;
 						}
@@ -451,7 +455,7 @@ let prompthighl = {};
 				}
 				const w_match = /\:\s*([\+\-]?[\d\.]+)\s*\)+\s*$/.exec(result_innerText);
 				const base_layer = ((new RegExp("^\\"+path[i].type+"+").exec(result_innerText.replace(/\s*/g,""))||[])[0]||"").split(path[i].type).length - 1;
-				const self_weight = Math.pow(syntax_list[path[i].type].base_weight, base_layer);
+				const self_weight = Math.pow(syntax_list[path[i].type].base_weight, base_layer<1?1:base_layer);
 				weight *= (w_match === null || typeof(w_match) === typeof(undefined)) ? self_weight : (x=>Number.isFinite(x)?x:self_weight)(parseFloat(/[\+\-]?\d*(\.\d+)?/.exec(w_match[1])[0]));
 			}
 			return weight;
