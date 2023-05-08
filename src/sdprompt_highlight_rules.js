@@ -31,7 +31,33 @@ var prompt = {
         }
     }
 }
-var supportConstantColor = "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen";
+var supportConstantColor = /(aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen)_/;
+
+function getColorToken(base_token){
+    return (function(default_token){
+        return {
+            token : (function(defaultToken){return function(name) {
+                const colorItem = prompthighl.getColorItem(name.trim());
+                if(colorItem) return "sdpromptcolor.color_"+colorItem.title;
+                const cssColor = (supportConstantColor.exec(name.trim())||[])[1];
+                if(cssColor) return "csscolor.color_"+cssColor.trim();
+                return defaultToken;
+            }})(default_token),
+            regex : "\\b\\w+(?=rgb\\b)|\\b\\w+\\b"
+        };
+    })(base_token);
+}
+const rgbColorToken = {
+    token : function(red,green,blue){
+        const input_color = {r:parseFloat(red),g:parseFloat(green),b:parseFloat(blue)};
+        if(input_color.r < 256 && input_color.g < 256 && input_color.b < 256){
+            return `csscolor.rgb_${input_color.r}_${input_color.g}_${input_color.b}`
+        }
+        return "invalid";
+    }, 
+    regex : "rgb\\(\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*\\)"
+};
+
 var sdpromptHighlightRules = function() {
     this.$rules = {
         "start" : [
@@ -39,13 +65,15 @@ var sdpromptHighlightRules = function() {
             {token : "invalid", regex : "\\)"},
             {token : "invalid", regex : "\\]"},
             {token : "invalid", regex : "\\}"},
-            {token : "text", regex: "\\s+"},
             {token : "constant.language.escape.charescape", regex : "\\\\u", push  : "state.escape.unicode"},
             {token : "constant.language.escape.charescape", regex : "\\\\", push  : "state.escape"},
             {token : "comment",  regex : /#.+$/},
             {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("text"),
         ],
         "specialsyntax" : [
+            {token : "whitespace", regex: "\\s+"},
+            rgbColorToken,
             {token : "extranetwork.keyword.begin", regex : prompt.re.extranetwork.begin, push  : "extranetwork"},
             {token : "promptstep.keyword.begin", regex : prompt.re.promptstep.begin, push  : "state.step"},
             {token : "promptweight.keyword.begin", regex : prompt.re.promptweight.begin, push  : "state.weight"},
@@ -54,7 +82,6 @@ var sdpromptHighlightRules = function() {
             {token : "keyword", regex : prompt.re.wildcard.begin, push  :"state.wildcard"},
             {token : "keyword", regex : "(AND|BREAK)"},
             {token : "qualitytag.variable.language", regex : "\\b(\\w+[\\s_]+quality|masterpiece)"},
-            {token : "support.constant.color", regex : "((?<=[\\s_])|\\b)("+supportConstantColor+")((?=[\\s_])|\\b)"},
         ],
         "state.weight" : [
             {token : "constant.language.escape.charescape", regex : "\\\\u", push  : "state.escape.unicode"},
@@ -62,7 +89,8 @@ var sdpromptHighlightRules = function() {
             {token : "promptweight.keyword.end",   regex : prompt.re.promptweight.end,     next  : "pop"},
             {token : "promptweight.keyword.operator", regex : ":", next  : "state.weight.op"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("promptweight"),
             {defaultToken : "promptweight"}
         ],
         "state.weight.op" : [
@@ -70,7 +98,8 @@ var sdpromptHighlightRules = function() {
             {token : "promptweight.keyword.end",   regex : prompt.re.promptweight.end,     next  : "pop"},
             {token : "promptweight.constant.numeric", regex: "[+-]?[\\d\\.]+\\b"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("promptweight"),
             {defaultToken : "promptweight"}
         ],
         "state.wildcard" : [
@@ -90,6 +119,7 @@ var sdpromptHighlightRules = function() {
             {token : "promptwildcardtemplate.keyword.operator", regex : "[:=]"},
             {token : "promptwildcardtemplate.keyword.operator", regex : "[~@]"},
             {token : "comment",  regex : /#.+$/},
+            getColorToken("promptwildcardtemplate"),
             {defaultToken : "promptwildcardtemplate"}
         ],
         "state.variable" : [
@@ -100,7 +130,8 @@ var sdpromptHighlightRules = function() {
             {token : "promptvariable.keyword.operator", regex : "[~@]"},
             {token : "promptvariable.constant.numeric", regex: "[+-]?[\\d\\.]+\\b"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("promptvariable"),
             {defaultToken : "promptvariable"}
         ],
         "state.dynamicselection" : [
@@ -112,7 +143,8 @@ var sdpromptHighlightRules = function() {
             {token : "keyword.operator", regex : "[~@]"},
             {token : "constant.numeric", regex: "[+-]?[\\d\\.]+\\b"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("dynamicselection"),
             {defaultToken : "dynamicselection"}
         ],
         "state.step" : [
@@ -122,7 +154,8 @@ var sdpromptHighlightRules = function() {
             {token : "promptstep.keyword.operator", regex : ":", next  : "state.step.op"},
             {token : "promptstep.keyword.operator", regex : "\\|"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("promptstep"),
             {defaultToken : "promptstep"}
         ],
         "state.step.op" : [
@@ -131,7 +164,8 @@ var sdpromptHighlightRules = function() {
             {token : "promptstep.constant.numeric", regex: "[+-]?[\\d\\.]+\\b"},
             {token : "promptstep.keyword.operator", regex : "\\|", next  : "state.step.op"},
             {token : "comment",  regex : /#.+$/},
-            {include: "specialsyntax"},
+            {include: "specialsyntax", caseInsensitive: true},
+            getColorToken("promptstep"),
             {defaultToken : "promptstep"}
         ],
         "state.escape.unicode" : [

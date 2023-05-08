@@ -43,7 +43,17 @@ let prompthighl = {};
 		head.appendChild(link);
 	}
 	load_css();
-    
+
+	prompthighl.colorlist = {};
+	function loadColorList(){
+		prompthighl.readFile([ext_path, "scripts", "color.json"].join("/")).then((res) => {
+			prompthighl.colorlist = JSON.parse(res);
+		})
+		.catch((err) => {
+			prompthighl.colorlist = {};
+		})
+	}
+
 	function has_jquery(){
 		try{
 			return !!$;
@@ -171,6 +181,8 @@ let prompthighl = {};
 					new_node = $(`<span>${html}</span>`)[0];
 					ptr.parentNode.replaceChild(new_node, ptr);
 				} else {
+					if(ptr.classList.contains("ace_lora_already"))continue;
+					ptr.classList.add("ace_lora_already");
 					new_node.innerHTML = html;
 				}
 				let maybe_node_list = new_node.querySelectorAll(".ace_maybeti");
@@ -328,6 +340,8 @@ let prompthighl = {};
 		let data_list = [];
 		for(let bucket_item = bucket_list.shift(); bucket_list.length > 0; bucket_item = bucket_list.shift()){
 			let inner = bucket_item.textContent || bucket_item.innerText || bucket_item.innerHTML;
+			if((bucket_item?.classList||{contains:()=>false}).contains("ace_weight_already"))continue;
+			if((bucket_item?.classList||{}).add)bucket_item.classList.add("ace_weight_already");
 			if(inner){
 				let stack = [];
 				for(let ptr = bucket_item; (ptr == bucket_item  || stack.length > 0) && ptr !== null && typeof(ptr) !== typeof(undefined); ptr = next_element(ptr)) {
@@ -780,22 +794,71 @@ let prompthighl = {};
 					self.activeWeightColoring();
 				}
 				self.activeloraBinding();
+				
 				// each time renderer updates, get all elements with ace_color class
-				var colors = self.editor.container.getElementsByClassName('ace_color');
-
-				// iterate through them and set their background color and font color accordingly
-				for (var i = 0, len = colors.length; i < len; i++) {
-
-					const colorString = colors[i].textContent;
-
-					if (colors[i].getAttribute('data-color') === colorString) {
+				let color_elements = [];
+				for(const color_prompt of self.editor.container.querySelectorAll(".ace_sdpromptcolor, .ace_csscolor")){
+					let color_inner = color_prompt.textContent || color_prompt.innerText || color_prompt.innerHTML;
+					if((""+(color_inner||"")).trim() === "") continue;
+					let color = "";
+					let is_rgb = false;
+					for(const class_name of color_prompt.classList){
+						const check_color = (/ace_color_(.+)$/.exec(class_name)||[])[1];
+						if (check_color){
+							color = check_color;
+							break;
+						}
+						const check_rgb = (/ace_rgb_(.+)$/.exec(class_name)||[])[1];
+						if (check_rgb){
+							is_rgb = true;
+							color = "rgb("+check_rgb.split("_").join(",")+")";
+							break;
+						}
+					}
+					color = color.trim();
+					if(color==="")continue;
+					if (color_prompt.getAttribute('data-color') === color) {
 						// dont rerender the same color 
 						continue;
 					}
-
-					colors[i].setAttribute("data-color", colorString);
-					colors[i].style.cssText = `--data-color: ${colorString};`;
-					colors[i].classList.add("data-color");
+					color_prompt.setAttribute("data-color", color);
+					const is_css = !!color_prompt.classList.contains('ace_csscolor');
+					if(is_rgb){
+						color_elements.push({
+							element: color_prompt,
+							color: color
+						});
+					}else{
+						let color_item = { title: color, value: color.toLowerCase(), name: color.toLowerCase() };
+						if(!is_css){
+							color_item = prompthighl.getColorItem(color+"_1");
+						}
+						color_prompt.innerHTML = color_prompt.innerHTML.replace(new RegExp(`(${color.toLowerCase()})`,"i"),"<span class=\"ace_color ace_toaddcolor\">$1</span>");
+						const new_ele = color_prompt.querySelector(".ace_toaddcolor");
+						if(new_ele){
+							color_elements.push({
+								element: new_ele,
+								color: color_item.value
+							});
+						}
+					}
+				}
+				//iterate through them and set their background color and font color accordingly
+				for (var i = 0, len = color_elements.length; i < len; i++) {
+			
+					const colorString = color_elements[i].color;
+			
+					if (color_elements[i].element.getAttribute('data-color-render') === colorString) {
+						// dont rerender the same color 
+						continue;
+					}
+			
+					color_elements[i].element.setAttribute("data-color-render", colorString);
+					color_elements[i].element.style.cssText = `--data-color: ${colorString};`;
+					color_elements[i].element.classList.add("data-color");
+					color_elements[i].element.classList.add("ace_support");
+					color_elements[i].element.classList.add("ace_constant");
+					color_elements[i].element.classList.add("ace_color");
 				}
 
 				const background_color = document.defaultView.getComputedStyle(self.editor.container, null).getPropertyValue('background-color');
@@ -891,6 +954,8 @@ let prompthighl = {};
 		}
 	}
 	onUiLoaded(() => {
+		loadColorList();
+
 		const check_css = document.querySelectorAll("link");
 		let find_css = false;
 		let req_str = ext_path.split("=");
