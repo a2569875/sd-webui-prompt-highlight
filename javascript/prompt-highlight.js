@@ -554,7 +554,7 @@ let prompthighl = {};
 		this.smyles_editor_wrap.style.display = "block"
 		this.wikiEditor_ui_toolbar = document.createElement("div");
 		this.wikiEditor_ui_toolbar.setAttribute("id",this.name + "-wikiEditor-ui-toolbar");
-		this.wikiEditor_ui_toolbar.style.backgroundColor = "#f8f9fa";
+		this.wikiEditor_ui_toolbar.style.backgroundColor = "var(--panel-background-fill)";
 		this.wikiEditor_ui_toolbar.style.boxShadow = "0 2px 1px 0 rgba(0,0,0,0.1)";
 		this.wikiEditor_ui_toolbar.style.position = "relative";
 		this.wikiEditor_ui_toolbar.style.display = "block";
@@ -664,6 +664,7 @@ let prompthighl = {};
 		
 		//Create and append select list
 		this.selectTheme = document.createElement("select");
+		this.selectTheme.classList.add("wikiEditor-theme-selector")
 		this.selectThemeLabel = document.createElement("span");
 		let selectThemeDisplayWrap = document.createElement("span");
 		selectThemeDisplayWrap.style.width = "50px";

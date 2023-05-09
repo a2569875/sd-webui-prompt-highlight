@@ -16,11 +16,21 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22%3E%3Ctitle%3E article search %3C/title%3E%3Cpath d=%22M12.43 14.34A5 5 0 0 1 10 15a5 5 0 1 1 3.95-2L17 16.09V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 1.45-.63z%22/%3E%3Ccircle cx=%2210%22 cy=%2210%22 r=%223%22/%3E%3C/svg%3E");
 }
 
+.wikiEditor-theme-selector optgroup, .wikiEditor-theme-selector option {
+    background-color: var(--background-fill-primary);
+}
+
 .ace_color.data-color{
     position: relative;
 }
 .oo-ui-image-progressive{
-    background-color: rgba(0,24,173,0.08235294);
+    border-color: var(--button-secondary-background-fill-hover);
+    background: var(--button-secondary-background-fill-hover);
+}
+
+.oo-ui-frame:hover {
+    border-color: var(--button-secondary-border-color-hover);
+    background: var(--button-secondary-background-fill-hover);
 }
 
 .ace_color.data-color{
@@ -104,10 +114,6 @@
     min-height: 20px;
     height: 100%;
     cursor: pointer;
-}
-
-.oo-ui-iconElement-icon:hover {
-    background-color: rgba(0,24,73,0.08235294);
 }
 
 .oo-ui-frame {
