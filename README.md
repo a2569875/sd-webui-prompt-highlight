@@ -48,3 +48,10 @@ Run the following command to compile:
 ```
 python build_ace.py
 ```
+
+## Acknowledgements
+*  [Wikipedia Syntax Highlight Code Editor Extension](https://github.com/wikimedia/mediawiki-extensions-CodeEditor)
+*  [JackEllie's Stable-Siffusion community team](https://discord.gg/TM5d89YNwA) 、 [Youtube channel](https://www.youtube.com/@JackEllie)
+*  [Chinese Wikipedia community team](https://discord.gg/77n7vnu)
+
+<p align="center"><img src="https://count.getloli.com/get/@a2569875-sd-webui-prompt-highlight.github" alt="a2569875/sd-webui-prompt-highlight"></p>

@@ -44,3 +44,10 @@ python install.py --dev
 ```
 python build_ace.py
 ```
+
+# 銘謝
+*  [維基百科語法上色插件](https://github.com/wikimedia/mediawiki-extensions-CodeEditor)
+*  [JackEllie的Stable-Siffusion的社群團隊](https://discord.gg/TM5d89YNwA) 、 [Youtube頻道](https://www.youtube.com/@JackEllie)
+*  [中文維基百科的社群團隊](https://discord.gg/77n7vnu)
+
+<p align="center"><img src="https://count.getloli.com/get/@a2569875-sd-webui-prompt-highlight.github" alt="a2569875/sd-webui-prompt-highlight"></p>
