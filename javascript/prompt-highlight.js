@@ -551,6 +551,7 @@ let prompthighl = {};
 		this.editor_div = document.createElement("div");
 		this.smyles_dragbar = document.createElement("div");
 		this.smyles_editor_wrap = document.createElement("div");
+		this.smyles_editor_wrap.style.display = "block"
 		this.wikiEditor_ui_toolbar = document.createElement("div");
 		this.wikiEditor_ui_toolbar.setAttribute("id",this.name + "-wikiEditor-ui-toolbar");
 		this.wikiEditor_ui_toolbar.style.backgroundColor = "#f8f9fa";

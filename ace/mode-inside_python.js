@@ -16,11 +16,11 @@ var inside_pythonHighlightRules = function () {
         "buffer|dict|hex|object|slice|coerce|dir|id|oct|sorted|intern|" +
         "ascii|breakpoint|bytes");
     var keywordMapper = this.createKeywordMapper({
-        "invalid.deprecated": "debugger",
-        "support.function": builtinFunctions,
-        "variable.language": "self|cls",
-        "constant.language": builtinConstants,
-        "keyword": keywords
+        "prompttoken.invalid.deprecated": "debugger",
+        "prompttoken.support.function": builtinFunctions,
+        "prompttoken.variable.language": "self|cls",
+        "prompttoken.constant.language": builtinConstants,
+        "prompttoken.keyword": keywords
     }, "identifier");
     var strPre = "[uU]?";
     var strRawPre = "[rR]";
@@ -38,330 +38,331 @@ var inside_pythonHighlightRules = function () {
     var exponentFloat = "(?:(?:" + pointFloat + "|" + intPart + ")" + exponent + ")";
     var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
     var stringEscape = "\\\\(x[0-9A-Fa-f]{2}|[0-7]{3}|[\\\\abfnrtv'\"]|U[0-9A-Fa-f]{8}|u[0-9A-Fa-f]{4})";
+    var STRING_TOKEN = "prompttoken.string";
     this.$rules = {
         "start": [{
-                token: "comment",
+                token: "prompttoken.comment",
                 regex: "#.*$"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + '"{3}',
                 next: "qqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + '"(?=.)',
                 next: "qqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + "'{3}",
                 next: "qstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + "'(?=.)",
                 next: "qstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + '"{3}',
                 next: "rawqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + '"(?=.)',
                 next: "rawqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + "'{3}",
                 next: "rawqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + "'(?=.)",
                 next: "rawqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + '"{3}',
                 next: "fqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + '"(?=.)',
                 next: "fqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + "'{3}",
                 next: "fqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + "'(?=.)",
                 next: "fqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + '"{3}',
                 next: "rfqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + '"(?=.)',
                 next: "rfqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + "'{3}",
                 next: "rfqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + "'(?=.)",
                 next: "rfqstring"
             }, {
-                token: "keyword.operator",
+                token: "prompttoken.keyword.operator",
                 regex: "\\+|\\-|\\*|\\*\\*|\\/|\\/\\/|%|@|<<|>>|&|\\||\\^|~|<|>|<=|=>|==|!=|<>|="
             }, {
-                token: "punctuation",
+                token: "prompttoken.punctuation",
                 regex: ",|:|;|\\->|\\+=|\\-=|\\*=|\\/=|\\/\\/=|%=|@=|&=|\\|=|^=|>>=|<<=|\\*\\*="
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?[\\[\\(\\{]"
             }, {
-                token: "paren.rparen",
+                token: "prompttoken.paren.rparen",
                 regex: "\\\\?[\\]\\)\\}]"
             }, {
-                token: ["keyword", "text", "entity.name.function"],
+                token: ["prompttoken.keyword", "prompttoken.text", "prompttoken.entity.name.function"],
                 regex: "(def|class)(\\s+)([\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w]+)"
             }, {
-                token: "text",
+                token: "prompttoken.text",
                 regex: "\\s+"
             }, {
                 include: "constants"
             }],
         "qqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "qqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "qstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rawqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rawqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "fqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rfqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstringParRules": [{
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?[\\[\\(]"
             }, {
-                token: "paren.rparen",
+                token: "prompttoken.paren.rparen",
                 regex: "\\\\?[\\]\\)]"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\s+"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'[^']*'"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"[^"]*"'
             }, {
-                token: "function.support",
+                token: "prompttoken.function.support",
                 regex: "(!s|!r|!a)"
             }, {
                 include: "constants"
             }, {
-                token: 'paren.rparen',
+                token: 'prompttoken.paren.rparen',
                 regex: "\\\\?\\}",
                 next: 'pop'
             }, {
-                token: 'paren.lparen',
+                token: 'prompttoken.paren.lparen',
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }],
         "constants": [{
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: "(?:" + floatNumber + "|\\d+)[jJ]\\b"
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: floatNumber
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: integer + "[lL]\\b"
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: integer + "\\b"
             }, {
-                token: ["punctuation", "function.support"],
+                token: ["prompttoken.punctuation", "prompttoken.function.support"],
                 regex: "(\\.)([a-zA-Z_]+)\\b"
             }, {
                 token: keywordMapper,

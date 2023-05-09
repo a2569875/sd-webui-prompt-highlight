@@ -16,11 +16,11 @@ var inside_pythonHighlightRules = function () {
         "buffer|dict|hex|object|slice|coerce|dir|id|oct|sorted|intern|" +
         "ascii|breakpoint|bytes");
     var keywordMapper = this.createKeywordMapper({
-        "invalid.deprecated": "debugger",
-        "support.function": builtinFunctions,
-        "variable.language": "self|cls",
-        "constant.language": builtinConstants,
-        "keyword": keywords
+        "prompttoken.invalid.deprecated": "debugger",
+        "prompttoken.support.function": builtinFunctions,
+        "prompttoken.variable.language": "self|cls",
+        "prompttoken.constant.language": builtinConstants,
+        "prompttoken.keyword": keywords
     }, "identifier");
     var strPre = "[uU]?";
     var strRawPre = "[rR]";
@@ -38,330 +38,331 @@ var inside_pythonHighlightRules = function () {
     var exponentFloat = "(?:(?:" + pointFloat + "|" + intPart + ")" + exponent + ")";
     var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
     var stringEscape = "\\\\(x[0-9A-Fa-f]{2}|[0-7]{3}|[\\\\abfnrtv'\"]|U[0-9A-Fa-f]{8}|u[0-9A-Fa-f]{4})";
+    var STRING_TOKEN = "prompttoken.string";
     this.$rules = {
         "start": [{
-                token: "comment",
+                token: "prompttoken.comment",
                 regex: "#.*$"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + '"{3}',
                 next: "qqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + '"(?=.)',
                 next: "qqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + "'{3}",
                 next: "qstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strPre + "'(?=.)",
                 next: "qstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + '"{3}',
                 next: "rawqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + '"(?=.)',
                 next: "rawqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + "'{3}",
                 next: "rawqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawPre + "'(?=.)",
                 next: "rawqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + '"{3}',
                 next: "fqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + '"(?=.)',
                 next: "fqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + "'{3}",
                 next: "fqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strFormatPre + "'(?=.)",
                 next: "fqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + '"{3}',
                 next: "rfqqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + '"(?=.)',
                 next: "rfqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + "'{3}",
                 next: "rfqstring3"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: strRawFormatPre + "'(?=.)",
                 next: "rfqstring"
             }, {
-                token: "keyword.operator",
+                token: "prompttoken.keyword.operator",
                 regex: "\\+|\\-|\\*|\\*\\*|\\/|\\/\\/|%|@|<<|>>|&|\\||\\^|~|<|>|<=|=>|==|!=|<>|="
             }, {
-                token: "punctuation",
+                token: "prompttoken.punctuation",
                 regex: ",|:|;|\\->|\\+=|\\-=|\\*=|\\/=|\\/\\/=|%=|@=|&=|\\|=|^=|>>=|<<=|\\*\\*="
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?[\\[\\(\\{]"
             }, {
-                token: "paren.rparen",
+                token: "prompttoken.paren.rparen",
                 regex: "\\\\?[\\]\\)\\}]"
             }, {
-                token: ["keyword", "text", "entity.name.function"],
+                token: ["prompttoken.keyword", "prompttoken.text", "prompttoken.entity.name.function"],
                 regex: "(def|class)(\\s+)([\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w]+)"
             }, {
-                token: "text",
+                token: "prompttoken.text",
                 regex: "\\s+"
             }, {
                 include: "constants"
             }],
         "qqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "qqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "qstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "qstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rawqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rawqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rawqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstring3": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "fqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstring": [{
-                token: "constant.language.escape.charescape",
+                token: "prompttoken.constant.language.escape.charescape",
                 regex: stringEscape
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"{3}',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqstring3": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'{3}",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\\\$",
                 next: "rfqqstring"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"|$',
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "rfqstring": [{
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'|$",
                 next: "start"
             }, {
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }, {
-                defaultToken: "string"
+                defaultToken: STRING_TOKEN
             }],
         "fqstringParRules": [{
-                token: "paren.lparen",
+                token: "prompttoken.paren.lparen",
                 regex: "\\\\?[\\[\\(]"
             }, {
-                token: "paren.rparen",
+                token: "prompttoken.paren.rparen",
                 regex: "\\\\?[\\]\\)]"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "\\s+"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: "'[^']*'"
             }, {
-                token: "string",
+                token: STRING_TOKEN,
                 regex: '"[^"]*"'
             }, {
-                token: "function.support",
+                token: "prompttoken.function.support",
                 regex: "(!s|!r|!a)"
             }, {
                 include: "constants"
             }, {
-                token: 'paren.rparen',
+                token: 'prompttoken.paren.rparen',
                 regex: "\\\\?\\}",
                 next: 'pop'
             }, {
-                token: 'paren.lparen',
+                token: 'prompttoken.paren.lparen',
                 regex: "\\\\?\\{",
                 push: "fqstringParRules"
             }],
         "constants": [{
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: "(?:" + floatNumber + "|\\d+)[jJ]\\b"
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: floatNumber
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: integer + "[lL]\\b"
             }, {
-                token: "constant.numeric",
+                token: "prompttoken.constant.numeric",
                 regex: integer + "\\b"
             }, {
-                token: ["punctuation", "function.support"],
+                token: ["prompttoken.punctuation", "prompttoken.function.support"],
                 regex: "(\\.)([a-zA-Z_]+)\\b"
             }, {
                 token: keywordMapper,
@@ -570,10 +571,10 @@ function getColorToken(base_token) {
                 return function (name) {
                     var colorItem = prompthighl.getColorItem(name.trim());
                     if (colorItem)
-                        return "sdpromptcolor.color_" + colorItem.title;
+                        return "prompttoken.sdpromptcolor.color_" + colorItem.title;
                     var cssColor = (supportConstantColor.exec(name.trim()) || [])[1];
                     if (cssColor)
-                        return "csscolor.color_" + cssColor.trim();
+                        return "prompttoken.csscolor.color_" + cssColor.trim();
                     return defaultToken;
                 };
             })(default_token),
@@ -585,159 +586,159 @@ var rgbColorToken = {
     token: function (red, green, blue) {
         var input_color = { r: parseFloat(red), g: parseFloat(green), b: parseFloat(blue) };
         if (input_color.r < 256 && input_color.g < 256 && input_color.b < 256) {
-            return "csscolor.rgb_".concat(input_color.r, "_").concat(input_color.g, "_").concat(input_color.b);
+            return "prompttoken.csscolor.rgb_".concat(input_color.r, "_").concat(input_color.g, "_").concat(input_color.b);
         }
-        return "invalid";
+        return "prompttoken.invalid";
     },
     regex: "rgb\\(\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*,\\s*(\\d{1,3})\\s*\\)"
 };
 var sdpromptHighlightRules = function () {
     this.$rules = {
         "start": [
-            { token: "invalid", regex: ">" },
-            { token: "invalid", regex: "\\)" },
-            { token: "invalid", regex: "\\]" },
-            { token: "invalid", regex: "\\}" },
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.invalid", regex: ">" },
+            { token: "prompttoken.invalid", regex: "\\)" },
+            { token: "prompttoken.invalid", regex: "\\]" },
+            { token: "prompttoken.invalid", regex: "\\}" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("text"),
+            getColorToken("prompttoken.text"),
         ],
         "specialsyntax": [
-            { token: "whitespace", regex: "\\s+" },
+            { token: "prompttoken.whitespace", regex: "\\s+" },
             rgbColorToken,
-            { token: "extranetwork.keyword.begin", regex: prompt.re.extranetwork.begin, push: "extranetwork" },
-            { token: "promptstep.keyword.begin", regex: prompt.re.promptstep.begin, push: "state.step" },
-            { token: "promptweight.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.weight" },
-            { token: "promptvariable.keyword.begin", regex: prompt.re.promptvariable.begin, push: "state.variable" },
-            { token: "dynamicselection.keyword.begin", regex: prompt.re.dynamicselection.begin, push: "state.dynamicselection" },
-            { token: "keyword", regex: prompt.re.wildcard.begin, push: "state.wildcard" },
-            { token: "keyword", regex: "(AND|BREAK)" },
-            { token: "qualitytag.variable.language", regex: "\\b(\\w+[\\s_]+quality|masterpiece)" },
+            { token: "prompttoken.extranetwork.keyword.begin", regex: prompt.re.extranetwork.begin, push: "extranetwork" },
+            { token: "prompttoken.promptstep.keyword.begin", regex: prompt.re.promptstep.begin, push: "state.step" },
+            { token: "prompttoken.promptweight.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.weight" },
+            { token: "prompttoken.promptvariable.keyword.begin", regex: prompt.re.promptvariable.begin, push: "state.variable" },
+            { token: "prompttoken.dynamicselection.keyword.begin", regex: prompt.re.dynamicselection.begin, push: "state.dynamicselection" },
+            { token: "prompttoken.keyword", regex: prompt.re.wildcard.begin, push: "state.wildcard" },
+            { token: "prompttoken.keyword", regex: "(AND|BREAK)" },
+            { token: "prompttoken.qualitytag.variable.language", regex: "\\b(\\w+[\\s_]+quality|masterpiece)" },
         ],
         "state.weight": [
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
-            { token: "promptweight.keyword.operator", regex: ":", next: "state.weight.op" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
+            { token: "prompttoken.promptweight.keyword.operator", regex: ":", next: "state.weight.op" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("promptweight"),
-            { defaultToken: "promptweight" }
+            getColorToken("prompttoken.promptweight"),
+            { defaultToken: "prompttoken.promptweight" }
         ],
         "state.weight.op": [
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
-            { token: "promptweight.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptweight.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
+            { token: "prompttoken.promptweight.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("promptweight"),
-            { defaultToken: "promptweight" }
+            getColorToken("prompttoken.promptweight"),
+            { defaultToken: "prompttoken.promptweight" }
         ],
         "state.wildcard": [
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptwildcardtemplate.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.wildcard.template" },
-            { token: "promptwildcard.keyword.end", regex: prompt.re.wildcard.end, next: "pop" },
-            { token: "promptwildcard.keyword.operator", regex: ":", next: "state.weight.op" },
-            { token: "promptwildcard.keyword.operator", regex: "[~@]" },
-            { token: "comment", regex: /#.+$/ },
-            { defaultToken: "promptwildcard.keyword" }
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptwildcardtemplate.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.wildcard.template" },
+            { token: "prompttoken.promptwildcard.keyword.end", regex: prompt.re.wildcard.end, next: "pop" },
+            { token: "prompttoken.promptwildcard.keyword.operator", regex: ":", next: "state.weight.op" },
+            { token: "prompttoken.promptwildcard.keyword.operator", regex: "[~@]" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
+            { defaultToken: "prompttoken.promptwildcard.keyword" }
         ],
         "state.wildcard.template": [
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptwildcardtemplate.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
-            { token: "promptwildcardtemplate.keyword.operator", regex: "[:=]" },
-            { token: "promptwildcardtemplate.keyword.operator", regex: "[~@]" },
-            { token: "comment", regex: /#.+$/ },
-            getColorToken("promptwildcardtemplate"),
-            { defaultToken: "promptwildcardtemplate" }
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptwildcardtemplate.keyword.end", regex: prompt.re.promptweight.end, next: "pop" },
+            { token: "prompttoken.promptwildcardtemplate.keyword.operator", regex: "[:=]" },
+            { token: "prompttoken.promptwildcardtemplate.keyword.operator", regex: "[~@]" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
+            getColorToken("prompttoken.promptwildcardtemplate"),
+            { defaultToken: "prompttoken.promptwildcardtemplate" }
         ],
         "state.variable": [
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptvariable.keyword.end", regex: prompt.re.promptvariable.end, next: "pop" },
-            { token: "promptvariable.keyword.operator", regex: "[=\\!]" },
-            { token: "promptvariable.keyword.operator", regex: "[~@]" },
-            { token: "promptvariable.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptvariable.keyword.end", regex: prompt.re.promptvariable.end, next: "pop" },
+            { token: "prompttoken.promptvariable.keyword.operator", regex: "[=\\!]" },
+            { token: "prompttoken.promptvariable.keyword.operator", regex: "[~@]" },
+            { token: "prompttoken.promptvariable.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("promptvariable"),
-            { defaultToken: "promptvariable" }
+            getColorToken("prompttoken.promptvariable"),
+            { defaultToken: "prompttoken.promptvariable" }
         ],
         "state.dynamicselection": [
-            { token: "constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "keyword", regex: prompt.re.dynamicselection.end, next: "pop" },
-            { token: "keyword.operator", regex: "[:|\\|]" },
-            { token: "keyword", regex: "\\$\\$" },
-            { token: "keyword.operator", regex: "[~@]" },
-            { token: "constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\u", push: "state.escape.unicode" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.keyword", regex: prompt.re.dynamicselection.end, next: "pop" },
+            { token: "prompttoken.keyword.operator", regex: "[:|\\|]" },
+            { token: "prompttoken.keyword", regex: "\\$\\$" },
+            { token: "prompttoken.keyword.operator", regex: "[~@]" },
+            { token: "prompttoken.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("dynamicselection"),
-            { defaultToken: "dynamicselection" }
+            getColorToken("prompttoken.dynamicselection"),
+            { defaultToken: "prompttoken.dynamicselection" }
         ],
         "state.step": [
-            { token: "promptstep.keyword.operator.charescape", regex: "\\\\u0023", next: "supercmd" },
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
-            { token: "promptstep.keyword.operator", regex: ":", next: "state.step.op" },
-            { token: "promptstep.keyword.operator", regex: "\\|" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.promptstep.keyword.operator.charescape", regex: "\\\\u0023", next: "supercmd" },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
+            { token: "prompttoken.promptstep.keyword.operator", regex: ":", next: "state.step.op" },
+            { token: "prompttoken.promptstep.keyword.operator", regex: "\\|" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("promptstep"),
-            { defaultToken: "promptstep" }
+            getColorToken("prompttoken.promptstep"),
+            { defaultToken: "prompttoken.promptstep" }
         ],
         "state.step.op": [
-            { token: "constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
-            { token: "promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
-            { token: "promptstep.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
-            { token: "promptstep.keyword.operator", regex: "\\|", next: "state.step.op" },
-            { token: "comment", regex: /#.+$/ },
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\\\", push: "state.escape" },
+            { token: "prompttoken.promptstep.keyword.end", regex: prompt.re.promptstep.end, next: "pop" },
+            { token: "prompttoken.promptstep.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
+            { token: "prompttoken.promptstep.keyword.operator", regex: "\\|", next: "state.step.op" },
+            { token: "prompttoken.comment", regex: /#.+$/ },
             { include: "specialsyntax", caseInsensitive: true },
-            getColorToken("promptstep"),
-            { defaultToken: "promptstep" }
+            getColorToken("prompttoken.promptstep"),
+            { defaultToken: "prompttoken.promptstep" }
         ],
         "state.escape.unicode": [
-            { token: "constant.language.escape.charescape", regex: "\\d{4}", next: "pop" },
-            { defaultToken: "constant.language.escape.charescape" }
+            { token: "prompttoken.constant.language.escape.charescape", regex: "\\d{4}", next: "pop" },
+            { defaultToken: "prompttoken.constant.language.escape.charescape" }
         ],
         "supercmd": [
-            { token: "keyword", regex: "cmd\\\\\\(", next: "python-start" },
-            { token: "keyword", regex: "\\w+\\b", next: "state.step" },
-            { token: "supercmd.stop", regex: "[:\\]]", next: "state.step" },
-            { defaultToken: "supercmd" }
+            { token: "prompttoken.keyword", regex: "cmd\\\\\\(", next: "python-start" },
+            { token: "prompttoken.keyword", regex: "\\w+\\b", next: "state.step" },
+            { token: "prompttoken.supercmd.stop", regex: "[:\\]]", next: "state.step" },
+            { defaultToken: "prompttoken.supercmd" }
         ],
         "state.escape": [
-            { token: "constant.language.escape.charescape", regex: ".", next: "pop" },
-            { defaultToken: "constant.language.escape.charescape" }
+            { token: "prompttoken.constant.language.escape.charescape", regex: ".", next: "pop" },
+            { defaultToken: "prompttoken.constant.language.escape.charescape" }
         ],
         "extranetwork": [
-            { token: "extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
-            { token: "invalid", regex: "<" },
-            { token: "extranetwork.storage.type", regex: "[^:]+", next: "extranetwork.id" },
-            { defaultToken: "extranetwork" }
+            { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
+            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.storage.type", regex: "[^:]+", next: "extranetwork.id" },
+            { defaultToken: "prompttoken.extranetwork" }
         ],
         "extranetwork.id": [
-            { token: "invalid", regex: "<" },
-            { token: "extranetwork.name.variable.language", regex: "[^:>]+", next: "extranetwork.param" },
-            { token: "extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
-            { token: "extranetwork.split", regex: ":" },
-            { defaultToken: "extranetwork" }
+            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.name.variable.language", regex: "[^:>]+", next: "extranetwork.param" },
+            { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
+            { token: "prompttoken.extranetwork.split", regex: ":" },
+            { defaultToken: "prompttoken.extranetwork" }
         ],
         "extranetwork.param": [
-            { token: "invalid", regex: "<" },
-            { token: "extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
-            { token: "extranetwork.split", regex: ":" },
-            { token: "extranetwork.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
-            { defaultToken: "extranetwork" }
+            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
+            { token: "prompttoken.extranetwork.split", regex: ":" },
+            { token: "prompttoken.extranetwork.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },
+            { defaultToken: "prompttoken.extranetwork" }
         ],
     };
     this.embedRules(PythonHighlightRules, "python-", [
-        { token: "keyword", regex: "\\\\\\)(?=\\s*[\\:#\\[\\]])", next: "supercmd" },
+        { token: "prompttoken.keyword", regex: "\\\\\\)(?=\\s*[\\:#\\[\\]])", next: "supercmd" },
     ]);
     this.normalizeRules();
 };
