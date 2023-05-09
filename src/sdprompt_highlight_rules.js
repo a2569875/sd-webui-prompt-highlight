@@ -3,6 +3,7 @@ require("../ext/themelist");
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var PythonHighlightRules = require("./inside_python_highlight_rules").inside_pythonHighlightRules;
+var prompttokenselector = "prompttoken";
 var prompt = {
     re:{
         extranetwork : {
