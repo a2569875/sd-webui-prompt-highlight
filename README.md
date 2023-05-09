@@ -1,6 +1,6 @@
 [![Python](https://img.shields.io/badge/Python-%E2%89%A73.10-blue)](https://www.python.org/downloads/)
 [![node.js](https://img.shields.io/badge/node--js-%E2%89%A718.16-green)](https://nodejs.org/)
-[![License]](https://github.com/a2569875/sd-webui-prompt-highlight/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/a2569875/sd-webui-prompt-highlight)](https://github.com/a2569875/sd-webui-prompt-highlight/blob/main/LICENSE)
 #  Stable Diffusion WebUI Prompt Highlight Plugin
 
 ![](readme/fig1.png)
