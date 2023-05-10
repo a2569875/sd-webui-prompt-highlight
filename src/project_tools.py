@@ -5,6 +5,7 @@ import json
 import subprocess
 import shutil
 from distutils.dir_util import copy_tree
+from pathlib import Path
 
 prevdir = os.getcwd()
 git = os.environ.get('GIT', "git")
@@ -160,4 +161,40 @@ def getJsCompileList():
     with open(os.path.realpath(project_json_path), 'r') as f:
         project_json = json.load(f)
         return project_json
+
+JS_TRANSLATE_WORD = "ace_line_group"
+TEXTBOX_TOKENS = ["ace_line", "ace_prompttoken", JS_TRANSLATE_WORD]
+def ignortTranslateTextbox():
+    webui_path = os.environ.get('PYTHONPATH', None)
+    if webui_path is None:
+        return
+    
+    file_path = os.path.join(webui_path, "javascript", "localization.js")
+    if not os.path.isfile(file_path):
+        return
+
+    with open(file_path, "r", encoding='utf8') as f:
+        content = f.read()
+
+    if re.search(JS_TRANSLATE_WORD, content):
+        return
+    
+    pattern = r"([^\n\ri]+)if\s*\(\s*ignore_ids_for_localization\s*\[([^\.]+)"
+    match = re.search(pattern, content)
+
+    if match:
+        indented = match.group(1)
+        pnode = match.group(2)
+        OR_OP = "||"
+        for i in range(len(TEXTBOX_TOKENS)):
+            TEXTBOX_TOKENS[i] = f"{pnode}.classList.contains(\"{TEXTBOX_TOKENS[i]}\")"
+        new_code = f"if({OR_OP.join(TEXTBOX_TOKENS)}) return false;\n"
+        modified_content = content[:match.start()] + "\n" + indented + new_code + content[match.start():]
+        
+        with open(file_path, "w", encoding='utf8') as f:
+            f.write(modified_content)
+            
+        print("Textbox setup successfully")
+    else:
+        print("Textbox setup fail. The translation function will affect the text input")
     

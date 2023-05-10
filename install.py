@@ -14,5 +14,7 @@ if "--dev" in sys.argv:
     init_dev()
     print("Successfully installed sd-webui-prompt-highlight for Development.")
 else:
+    print("Installing requirements for sd-webui-prompt-highlight")
     print("load sd-webui-prompt-highlight for WebUI. for Development try 'python install.py --dev'")
     utils.install_requirements()
+    utils.ignortTranslateTextbox()
