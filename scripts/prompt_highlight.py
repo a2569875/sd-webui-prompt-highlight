@@ -1,5 +1,6 @@
 import os
 from scripts import themelist
+from scripts import my_init
 from scripts import myutils as scripts_utils
 import gradio as gr
 from modules import script_callbacks, shared
@@ -9,6 +10,8 @@ import json
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 project_path = os.sep.join(__file__.split(os.sep)[0:-2])
+
+my_init.check_conflict()
 
 def on_ui_settings():
     PHL_SECTION = ("sd-prompt-highlight", "Prompt Highlight")
