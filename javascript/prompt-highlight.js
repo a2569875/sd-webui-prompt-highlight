@@ -743,7 +743,6 @@ let prompthighl = {};
 		this.editor.setOptions({
 			cursorStyle: "slim",
 			behavioursEnabled: true,
-			enableBasicAutocompletion: true,
 			fontSize: "12pt"
 		});
 		this.value = this.textArea.value;

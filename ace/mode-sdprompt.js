@@ -2,25 +2,32 @@ define("ace/mode/inside_python_highlight_rules",["require","exports","module","a
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var inside_pythonHighlightRules = function () {
-    var keywords = ("and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
+    var keywords = ("and|as|assert|break|class|continue|def|del|elif|else|except|" +
         "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
         "raise|return|try|while|with|yield|async|await|nonlocal");
-    var builtinConstants = ("True|False|None|NotImplemented|Ellipsis|__debug__");
+    var builtinConstants = ("True|False|None|NotImplemented|Ellipsis|__debug__|pi|weight|life|" +
+        "steps");
+    var specialVariable = ("self|cls|lora|lora_module|lora_type|lora_name|layer_name|" +
+        "current_prompt|sd_processing|enable_prepare_step|step");
     var builtinFunctions = ("abs|divmod|input|open|staticmethod|all|enumerate|int|ord|str|any|" +
-        "eval|isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
+        "isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
         "binfile|bin|iter|property|tuple|bool|filter|len|range|type|bytearray|" +
         "float|list|raw_input|unichr|callable|format|locals|reduce|unicode|" +
         "chr|frozenset|long|reload|vars|classmethod|getattr|map|repr|xrange|" +
-        "cmp|globals|max|reversed|zip|compile|hasattr|memoryview|round|" +
-        "__import__|complex|hash|min|apply|delattr|help|next|setattr|set|" +
+        "cmp|globals|max|reversed|zip|hasattr|memoryview|round|" +
+        "complex|hash|min|apply|delattr|help|next|setattr|set|" +
         "buffer|dict|hex|object|slice|coerce|dir|id|oct|sorted|intern|" +
-        "ascii|breakpoint|bytes");
+        "ascii|bytes|ceil|fmod|gcd|perm|sqrt|exp|log|clamp|" +
+        "asin|acos|atan|sin|cos|tan|sinr|asinr|sinh|asinh|abssin|abscos|" +
+        "random|warmup|cooldown");
+    var functionNotAlloe = ("eval|exec|compile|breakpoint|__import__");
     var keywordMapper = this.createKeywordMapper({
         "prompttoken.invalid.deprecated": "debugger",
         "prompttoken.support.function": builtinFunctions,
-        "prompttoken.variable.language": "self|cls",
+        "prompttoken.variable.language": specialVariable,
         "prompttoken.constant.language": builtinConstants,
-        "prompttoken.keyword": keywords
+        "prompttoken.keyword": keywords,
+        "prompttoken.support.function.invalid": functionNotAlloe,
     }, "identifier");
     var strPre = "[uU]?";
     var strRawPre = "[rR]";
@@ -421,7 +428,7 @@ oop.inherits(Mode, TextMode);
         var indent = this.$getIndent(line);
         var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
         var tokens = tokenizedLine.tokens;
-        if (tokens.length && tokens[tokens.length - 1].type == "comment") {
+        if (tokens.length && tokens[tokens.length - 1].type == "prompttoken.comment") {
             return indent;
         }
         if (state == "start") {
@@ -447,10 +454,10 @@ oop.inherits(Mode, TextMode);
             return false;
         do {
             var last = tokens.pop();
-        } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
+        } while (last && (last.type == "prompttoken.comment" || (last.type == "prompttoken.text" && last.value.match(/^\s+$/))));
         if (!last)
             return false;
-        return (last.type == "keyword" && outdents[last.value]);
+        return (last.type == "prompttoken.keyword" && outdents[last.value]);
     };
     this.autoOutdent = function (state, doc, row) {
         row += 1;

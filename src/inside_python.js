@@ -27,7 +27,7 @@ oop.inherits(Mode, TextMode);
         var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
         var tokens = tokenizedLine.tokens;
 
-        if (tokens.length && tokens[tokens.length-1].type == "comment") {
+        if (tokens.length && tokens[tokens.length-1].type == "prompttoken.comment") {
             return indent;
         }
 
@@ -61,12 +61,12 @@ oop.inherits(Mode, TextMode);
         // ignore trailing comments
         do {
             var last = tokens.pop();
-        } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
+        } while (last && (last.type == "prompttoken.comment" || (last.type == "prompttoken.text" && last.value.match(/^\s+$/))));
         
         if (!last)
             return false;
         
-        return (last.type == "keyword" && outdents[last.value]);
+        return (last.type == "prompttoken.keyword" && outdents[last.value]);
     };
 
     this.autoOutdent = function(state, doc, row) {

@@ -6,34 +6,46 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var inside_pythonHighlightRules = function() {
 
     var keywords = (
-        "and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
+        "and|as|assert|break|class|continue|def|del|elif|else|except|" +
         "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
         "raise|return|try|while|with|yield|async|await|nonlocal"
     );
 
     var builtinConstants = (
-        "True|False|None|NotImplemented|Ellipsis|__debug__"
+        "True|False|None|NotImplemented|Ellipsis|__debug__|pi|weight|life|" +
+        "steps"
+    );
+
+    var specialVariable = ("self|cls|lora|lora_module|lora_type|lora_name|layer_name|"+
+        "current_prompt|sd_processing|enable_prepare_step|step"
     );
 
     var builtinFunctions = (
         "abs|divmod|input|open|staticmethod|all|enumerate|int|ord|str|any|" +
-        "eval|isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
+        "isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
         "binfile|bin|iter|property|tuple|bool|filter|len|range|type|bytearray|" +
         "float|list|raw_input|unichr|callable|format|locals|reduce|unicode|" +
         "chr|frozenset|long|reload|vars|classmethod|getattr|map|repr|xrange|" +
-        "cmp|globals|max|reversed|zip|compile|hasattr|memoryview|round|" +
-        "__import__|complex|hash|min|apply|delattr|help|next|setattr|set|" +
+        "cmp|globals|max|reversed|zip|hasattr|memoryview|round|" +
+        "complex|hash|min|apply|delattr|help|next|setattr|set|" +
         "buffer|dict|hex|object|slice|coerce|dir|id|oct|sorted|intern|" +
-        "ascii|breakpoint|bytes"
+        "ascii|bytes|ceil|fmod|gcd|perm|sqrt|exp|log|clamp|" +
+        "asin|acos|atan|sin|cos|tan|sinr|asinr|sinh|asinh|abssin|abscos|" +
+        "random|warmup|cooldown"
+    );
+
+    var functionNotAlloe = (
+        "eval|exec|compile|breakpoint|__import__"
     );
 
     //var futureReserved = "";
     var keywordMapper = this.createKeywordMapper({
         "prompttoken.invalid.deprecated": "debugger",
         "prompttoken.support.function": builtinFunctions,
-        "prompttoken.variable.language": "self|cls",
+        "prompttoken.variable.language": specialVariable,
         "prompttoken.constant.language": builtinConstants,
-        "prompttoken.keyword": keywords
+        "prompttoken.keyword": keywords,
+        "prompttoken.support.function.invalid": functionNotAlloe,
     }, "identifier");
 
     var strPre = "[uU]?";
