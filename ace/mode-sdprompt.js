@@ -615,13 +615,14 @@ var sdpromptHighlightRules = function () {
         "specialsyntax": [
             { token: "prompttoken.whitespace", regex: "\\s+" },
             rgbColorToken,
+            { token: "prompttoken.split", regex: "," },
             { token: "prompttoken.extranetwork.keyword.begin", regex: prompt.re.extranetwork.begin, push: "extranetwork" },
             { token: "prompttoken.promptstep.keyword.begin", regex: prompt.re.promptstep.begin, push: "state.step" },
             { token: "prompttoken.promptweight.keyword.begin", regex: prompt.re.promptweight.begin, push: "state.weight" },
             { token: "prompttoken.promptvariable.keyword.begin", regex: prompt.re.promptvariable.begin, push: "state.variable" },
             { token: "prompttoken.dynamicselection.keyword.begin", regex: prompt.re.dynamicselection.begin, push: "state.dynamicselection" },
             { token: "prompttoken.keyword", regex: prompt.re.wildcard.begin, push: "state.wildcard" },
-            { token: "prompttoken.keyword", regex: "(AND|BREAK)" },
+            { token: "prompttoken.promptkeyword.keyword", regex: "(AND|BREAK)" },
             { token: "prompttoken.qualitytag.variable.language", regex: "\\b(\\w+[\\s_]+quality|masterpiece)" },
         ],
         "state.weight": [
@@ -714,8 +715,8 @@ var sdpromptHighlightRules = function () {
             { defaultToken: "prompttoken.constant.language.escape.charescape" }
         ],
         "supercmd": [
-            { token: "prompttoken.keyword", regex: "cmd\\\\\\(", next: "python-start" },
-            { token: "prompttoken.keyword", regex: "\\w+\\b", next: "state.step" },
+            { token: "prompttoken.supercmd.keyword", regex: "cmd\\\\\\(", next: "python-start" },
+            { token: "prompttoken.supercmd.keyword", regex: "\\w+\\b", next: "state.step" },
             { token: "prompttoken.supercmd.stop", regex: "[:\\]]", next: "state.step" },
             { defaultToken: "prompttoken.supercmd" }
         ],
@@ -725,19 +726,19 @@ var sdpromptHighlightRules = function () {
         ],
         "extranetwork": [
             { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
-            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.invalid", regex: "<" },
             { token: "prompttoken.extranetwork.storage.type", regex: "[^:]+", next: "extranetwork.id" },
             { defaultToken: "prompttoken.extranetwork" }
         ],
         "extranetwork.id": [
-            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.invalid", regex: "<" },
             { token: "prompttoken.extranetwork.name.variable.language", regex: "[^:>]+", next: "extranetwork.param" },
             { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
             { token: "prompttoken.extranetwork.split", regex: ":" },
             { defaultToken: "prompttoken.extranetwork" }
         ],
         "extranetwork.param": [
-            { token: "prompttoken.invalid", regex: "<" },
+            { token: "prompttoken.extranetwork.invalid", regex: "<" },
             { token: "prompttoken.extranetwork.keyword.end", regex: prompt.re.extranetwork.end, next: "pop" },
             { token: "prompttoken.extranetwork.split", regex: ":" },
             { token: "prompttoken.extranetwork.constant.numeric", regex: "[+-]?[\\d\\.]+\\b" },

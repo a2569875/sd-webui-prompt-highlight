@@ -15,6 +15,23 @@ function module_init() {
         }
     }
     
+    function is_nullptr(obj) {
+        try {
+            if (typeof(obj) === "undefined") return true;
+            if (obj == undefined) return true;
+            if (obj == null) return true;
+        } catch (error) {
+            return true;
+        }
+        return false;
+    }
+
+    function is_empty(str) {
+        if (is_nullptr(str)) return true;
+        if ((''+str).trim() === '') return true;
+        return false;
+    }
+
     function readFile(url) {
         return new Promise((resolve, reject) => {
             var req = new XMLHttpRequest();
@@ -31,6 +48,45 @@ function module_init() {
             }
             req.send();
         });
+    }
+
+    function unescape_string(input_string){
+        let result = '';
+        const unicode_list = ['u','x'];
+        for(var i=0; i<input_string.length; ++i){
+            const current_char = input_string.charAt(i);
+            if(current_char == '\\'){
+                ++i;
+                if (i >= input_string.length) break;
+                const string_body = input_string.charAt(i);
+                if(unicode_list.includes(string_body.toLowerCase())){
+                    result += `${current_char}${string_body}`;
+                } else {
+                    let char_added = false;
+                    try {
+                        const unescaped = JSON.parse(`"${current_char}${string_body}"`);
+                        if (unescaped){
+                            result += unescaped;
+                            char_added = true;
+                        }
+                    } catch (error) {
+                        
+                    }
+                    if(!char_added){
+                        result += string_body;
+                    }
+                }
+            } else {
+                result += current_char;
+            }
+        }
+        return JSON.parse(JSON.stringify(result).replace(/\\\\/g,"\\"));
+    }
+
+    prompthighl.call = function(func, ...theArgs){
+        if(typeof(func) === typeof(prompthighl.noop_func)){
+            return func(...theArgs);
+        }
     }
 
     prompthighl.getColorItem = function(color_token){
@@ -58,6 +114,10 @@ function module_init() {
     }
 
     prompthighl.readFile = readFile;
+    prompthighl.noop_func = ()=>{};
+    prompthighl.is_empty = is_empty;
+    prompthighl.is_nullptr = is_nullptr;
+    prompthighl.unescape_string = unescape_string;
     
 }
 let module_loadded = false;

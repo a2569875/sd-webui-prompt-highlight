@@ -278,6 +278,91 @@ let prompthighl = {};
 		}
 	}
 
+	TextboxController.prototype.activeTranslating = function(){
+        try {
+            if(!lorahelper)return;
+        } catch (error) {
+            return;
+        }
+		window.setTimeout((function(self){return ()=>self.doTranslating();})(this), 0);
+	}
+	TextboxController.prototype.doTranslating = function(){
+		if(this.isDoTranslating){
+			this.padDoTranslating = true;
+			return;
+		}
+		this.isDoTranslating = true;
+		this.startTranslating();
+		while(this.padDoTranslating){
+			this.padDoTranslating = false;
+			this.startTranslating();
+		}
+		this.isDoTranslating = false;
+	}
+	TextboxController.prototype.startTranslating = function(){
+		let node_ptr = (((this.editor.container.querySelector(".ace_text-layer")?.childNodes||[])[0]?.childNodes||[])[0]?.childNodes||[])[0];
+		let first_node = null;
+		let text = "";
+		let trans_list = [];
+		for(let ptr = node_ptr; ptr !== null && typeof(ptr) !== typeof(undefined); ptr = next_element(ptr)) {
+			let ptr_inner = ptr.textContent || ptr.innerText || ptr.innerHTML;
+			if((ptr?.classList||{contains:()=>false}).contains("ace_supercmd"))continue;
+			if((ptr?.classList||{contains:()=>false}).contains("ace_supercmd"))continue;
+			if (ptr_inner) {
+				if((ptr?.classList||{contains:()=>false}).contains("ace_split")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_supercmd")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_comment")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_promptvariable")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_extranetwork")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_promptwildcard")||
+					(ptr?.classList||{contains:()=>false}).contains("ace_promptkeyword")){
+					if(text.trim()!=="" && first_node){
+						trans_list.push({
+							text:prompthighl.unescape_string(text.trim()).replace(/[\s\n\r_]+/g," "),
+							element:first_node
+						});
+					}
+					text = "";
+					first_node = null;
+					continue;
+				}
+				if(ptr_inner.trim()==="" && text==="")continue;
+				if(!first_node)first_node = ptr;
+				text += ptr_inner;
+			}
+		}
+		if(text.trim()!=="" && first_node){
+			trans_list.push({
+				text:prompthighl.unescape_string(text.trim()).replace(/[\s\n\r_]+/g," "),
+				element:first_node
+			});
+		}
+		const background_color = document.defaultView.getComputedStyle(this.editor.container, null).getPropertyValue('background-color');
+		for(let trans of trans_list){
+			if((trans.element.getAttribute("data-translate-orig")||"").trim()===trans.text.trim())continue;
+			trans.element.setAttribute("data-translate-orig", trans.text);
+			let lang_code = this.selectLanguage.value;
+			if(lang_code !== "en"){
+				prompthighl.add_translate(trans.text, lang_code, (function(trans_obj){
+					return translated=>{
+						if(trans_obj.element.getAttribute("data-translate-orig").trim()===translated.trim())return;
+						let css = trans_obj.element.style.cssText;
+						if (css.indexOf("data-translate") >= 0)css = 
+							css.replace(/(data\-translate\s*\:\s*[^;]+);/g, `data-translate: '${translated.replace(/(["'])/g, "\\$1")}'`);
+						else css += 
+							`--data-translate: '${translated.replace(/(["'])/g, "\\$1")}';`;
+						if (css.indexOf("data-background-color") >= 0)css = 
+							css.replace(/(data\-background\-color\s*\:\s*[^;]+);/g, `data-background-color: '${background_color}'`);
+						else css += 
+							`--data-background-color: ${background_color};`;
+						trans_obj.element.style.cssText = css;
+						trans_obj.element.classList.add("ace_translated_token");
+					};
+				})(trans));
+			}
+		}
+	}
+
 	TextboxController.prototype.activeWeightColoring = function(){
 		window.setTimeout((function(self){return ()=>self.doWeightColoring();})(this), 0);
 	}
@@ -340,11 +425,13 @@ let prompthighl = {};
 		let data_list = [];
 		for(let bucket_item = bucket_list.shift(); bucket_list.length > 0; bucket_item = bucket_list.shift()){
 			let inner = bucket_item.textContent || bucket_item.innerText || bucket_item.innerHTML;
+			if((bucket_item?.classList||{contains:()=>false}).contains("ace_supercmd"))continue;
 			if((bucket_item?.classList||{contains:()=>false}).contains("ace_weight_already"))continue;
 			if((bucket_item?.classList||{}).add)bucket_item.classList.add("ace_weight_already");
 			if(inner){
 				let stack = [];
 				for(let ptr = bucket_item; (ptr == bucket_item  || stack.length > 0) && ptr !== null && typeof(ptr) !== typeof(undefined); ptr = next_element(ptr)) {
+					if((ptr?.classList||{contains:()=>false}).contains("ace_supercmd"))continue;
 					let ptr_inner = ptr.textContent || ptr.innerText || ptr.innerHTML;
 					if (ptr_inner) {
 						let token = "text";
@@ -483,6 +570,7 @@ let prompthighl = {};
 			this.editor.setTheme("ace/theme/chrome");
 			this.selectThemeLabel.innerHTML = this.themeDist.chrome;
 		}
+		self.editor.renderer.updateText();
 	}
 
 	TextboxController.prototype.updateEnable = function(opt) {
@@ -662,6 +750,84 @@ let prompthighl = {};
 		}})(this));
 
 		
+        try {
+            if(lorahelper){
+				this.translate_btn = document.createElement("span");
+				this.translate_btn.classList.add("oo-ui-iconElement-icon");
+				this.translate_icon = document.createElement("span");
+				this.translate_icon.classList.add("oo-ui-translate");
+				this.translate_icon.innerHTML = "文/A";
+				this.translate_btn.appendChild(this.translate_icon);
+				btn_frame = document.createElement("span");
+				btn_frame.classList.add("oo-ui-frame");
+				btn_frame.appendChild(this.translate_btn);
+				this.group_codeeditor_style.appendChild(btn_frame);
+				this.translate_btn.on_off = false;
+				this.translate_btn.addEventListener("click", (function(self){return function(event){
+					self.translate_btn.on_off = !self.translate_btn.on_off;
+					if(self.translate_btn.on_off){
+						self.translate_btn.classList.add("oo-ui-image-progressive");
+						self.translate_icon.classList.add("oo-ui-weight-coloring");
+						prompthighl.startTranslateTask();
+					}else{
+						self.translate_btn.classList.remove("oo-ui-image-progressive");
+						self.translate_icon.classList.remove("oo-ui-weight-coloring");
+						prompthighl.stopTranslateTask();
+					}
+					self.editor.renderer.updateText();
+				}})(this));
+
+				//Create and append select list
+				this.selectLanguage = document.createElement("select");
+				this.selectLanguage.classList.add("wikiEditor-lang-selector")
+				this.selectLanguageLabel = document.createElement("span");
+				let selectLanguageDisplayWrap = document.createElement("span");
+				selectLanguageDisplayWrap.style.width = "50px";
+				selectLanguageDisplayWrap.style.position = "absolute";
+				selectLanguageDisplayWrap.style.overflow = "hidden";
+				btn_frame = document.createElement("span");
+				btn_frame.classList.add("oo-ui-frame");
+				btn_frame.style.width = "50px";
+				this.selectLanguage.style.width = "45px";
+				this.selectLanguage.style.position = "absolute";
+				this.selectLanguage.style.top = "0";
+				this.selectLanguage.style.background = "none";
+				this.selectLanguage.style.border = "none";
+				selectLanguageDisplayWrap.appendChild(this.selectLanguageLabel);
+				btn_frame.appendChild(selectLanguageDisplayWrap);
+				btn_frame.appendChild(this.selectLanguage);
+				this.group_codeeditor_style.appendChild(btn_frame);
+
+				//Create and append the options
+				for (const [key, value] of Object.entries(prompthighl.languages)) {
+					var option = document.createElement("option");
+					option.value = key;
+					option.text = value;
+					this.selectLanguage.appendChild(option);
+				}
+
+				this.LanguageIndexs = {};
+				const option_list = this.selectLanguage.querySelectorAll("option");
+				for(let i=0; i<option_list.length; ++i){
+					const option = option_list[i];
+					this.LanguageIndexs[option.value] = i;
+				}
+				const selected_Language = prompthighl.getLanguageFromOpts();
+				if(selected_Language){
+					this.selectLanguageLabel.innerHTML = selected_Language;
+					this.selectLanguage.selectedIndex = this.LanguageIndexs[selected_Language];
+				} else {
+					this.selectLanguageLabel.innerHTML = "";
+				}
+				this.selectLanguage.addEventListener("change", (function(self){return function(event){
+					const selected_Language = self.selectLanguage.value;
+					if (!selected_Language)
+						return;
+					self.selectLanguageLabel.innerHTML = selected_Language;
+				}})(this));
+			}
+        } catch (error) {}
+
 		//Create and append select list
 		this.selectTheme = document.createElement("select");
 		this.selectTheme.classList.add("wikiEditor-theme-selector")
@@ -725,6 +891,7 @@ let prompthighl = {};
 				return;
 			self.selectThemeLabel.innerHTML = self.themeDist[selectedTheme];
 			self.editor.setTheme("ace/theme/" + selectedTheme);
+			self.editor.renderer.updateText();
 		}})(this));
 
 		this.smyles_dragbar.classList.add("ace_resize-bar");
@@ -800,6 +967,10 @@ let prompthighl = {};
 				}
 				self.activeloraBinding();
 				
+				if(self.translate_btn.on_off){
+					self.activeTranslating();
+				}
+
 				// each time renderer updates, get all elements with ace_color class
 				let color_elements = [];
 				for(const color_prompt of self.editor.container.querySelectorAll(".ace_sdpromptcolor, .ace_csscolor")){
