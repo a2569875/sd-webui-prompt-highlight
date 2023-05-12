@@ -4,7 +4,9 @@ let prompthighl = {};
 	let extranetworkList = [];
 	let extranetworkTable = {};
 	var wpoffset = 0;
-	
+
+	const has_lorahelper = ()=>{try{return !!(lorahelper?.show_trigger_words)}catch(ex){return false;}};
+
 	const scripts = document.getElementsByTagName("script");
 	let current_file_name = "";
 	for (let script of scripts){
@@ -122,7 +124,6 @@ let prompthighl = {};
 	TextboxController.prototype.loraBinding = function(){
 		const search_query = ".ace_extranetwork.ace_type";
 		const active_tab = this.tabname;
-		const has_lorahelper = ()=>{try{return !!(lorahelper?.show_trigger_words)}catch(ex){return false;}};
 		const type_mapping = {
 			textual_inversion: ["textualinversion", "textual inversion", "ti", "embed", "embedding", "embeddings", "ebd"],
 			hypernetworks: ["hyper", "hypernet", "hypernetwork", "hypernetworks"],
@@ -339,20 +340,22 @@ let prompthighl = {};
 		}
 		const background_color = document.defaultView.getComputedStyle(this.editor.container, null).getPropertyValue('background-color');
 		for(let trans of trans_list){
-			if((trans.element.getAttribute("data-translate-orig")||"").trim()===trans.text.trim())continue;
-			trans.element.setAttribute("data-translate-orig", trans.text);
 			let lang_code = this.selectLanguage.value;
+			if(((trans.element.getAttribute("data-translate-orig")||"").trim()===trans.text.trim()) && 
+				((trans.element.getAttribute("data-translate-lang")||"").trim()===lang_code.toLowerCase()))continue;
+			trans.element.setAttribute("data-translate-orig", trans.text);
+			trans.element.setAttribute("data-translate-lang", lang_code);
 			if(lang_code !== "en"){
 				prompthighl.add_translate(trans.text, lang_code, (function(trans_obj){
 					return translated=>{
 						if(trans_obj.element.getAttribute("data-translate-orig").trim()===translated.trim())return;
 						let css = trans_obj.element.style.cssText;
 						if (css.indexOf("data-translate") >= 0)css = 
-							css.replace(/(data\-translate\s*\:\s*[^;]+);/g, `data-translate: '${translated.replace(/(["'])/g, "\\$1")}'`);
+							css.replace(/(data\-translate\s*\:\s*[^;]+);/g, `data-translate: '${translated.replace(/(["'])/g, "\\$1")}';`);
 						else css += 
 							`--data-translate: '${translated.replace(/(["'])/g, "\\$1")}';`;
 						if (css.indexOf("data-background-color") >= 0)css = 
-							css.replace(/(data\-background\-color\s*\:\s*[^;]+);/g, `data-background-color: '${background_color}'`);
+							css.replace(/(data\-background\-color\s*\:\s*[^;]+);/g, `data-background-color: '${background_color}';`);
 						else css += 
 							`--data-background-color: ${background_color};`;
 						trans_obj.element.style.cssText = css;
@@ -561,6 +564,7 @@ let prompthighl = {};
 		this.updateshowInvisibles(!!opts.prompt_highlight_display_invisible_char);
 		this.updateWeightColoringEnable(!!opts.prompt_highlight_weight_coloring);
 		this.updateFontSize(opts.prompt_highlight_font_size||12);
+		this.updateTranslationLanguage(prompthighl.getLanguageFromOpts());
 		const selected_theme = prompthighl.getThemeFromOpts();
 		if(selected_theme){
 			this.editor.setTheme(selected_theme.theme);
@@ -570,7 +574,7 @@ let prompthighl = {};
 			this.editor.setTheme("ace/theme/chrome");
 			this.selectThemeLabel.innerHTML = this.themeDist.chrome;
 		}
-		self.editor.renderer.updateText();
+		this.editor.renderer.updateText();
 	}
 
 	TextboxController.prototype.updateEnable = function(opt) {
@@ -633,6 +637,71 @@ let prompthighl = {};
 				fontSize: font_size + "pt"
 			  });
 		}
+	}
+
+	TextboxController.prototype.updateTranslationLanguage = function(opt) {
+		if(opt === this.old_selected_language) return;
+		this.old_selected_language = prompthighl.getLanguageFromOpts();
+		const selected_Language = opt;
+		console.log(selected_Language);
+		if(selected_Language && ((this.LanguageIndexs[selected_Language]||-1) >= 0)){
+			this.selectLanguageLabel.innerHTML = selected_Language;
+			let should_change = false;
+			if(this.selectLanguage.selectedIndex !== this.LanguageIndexs[selected_Language]){
+				should_change = true;
+			}
+			this.selectLanguage.selectedIndex = this.LanguageIndexs[selected_Language];
+			if(should_change){
+				this.editor.renderer.updateText();
+			}
+		}
+	}
+	TextboxController.prototype.changeLanguage = function(){
+		if(has_lorahelper()){
+			for(let option of this.selectLanguage.querySelectorAll("option")){
+				const lang_code = this.selectLanguage.value;
+				const translate_lang = option.getAttribute("data-translate-lang");
+				if(translate_lang === lang_code) continue;
+				else if(!prompthighl.is_empty(translate_lang)) option.setAttribute("translate-state", "lang_changed");
+				if(option.getAttribute("translate-state") === "ok"||option.getAttribute("translate-state") === "doing") continue;
+				option.setAttribute("translate-state", "doing");
+				option.setAttribute("data-translate-lang", lang_code);
+				const lang_name = option.getAttribute("lang-name");
+				if(prompthighl.is_empty(lang_name)) continue;			
+				prompthighl.load_translate(lang_name, lang_code, (function(trans_obj){
+					return translated=>{
+						trans_obj.text = translated;
+						trans_obj.setAttribute("translate-state","ok");
+					};
+				})(option));
+			}
+		}
+	}
+	TextboxController.prototype.updateTranslationEnable = function(opt) {
+		let can_enable = false; 
+		try {can_enable = !!lorahelper;}catch(ex){can_enable = false;};
+		if(opt){
+			if(!can_enable){
+				const Messagebox = prompthighl.alerts[this.tabname];
+				if (Messagebox)Messagebox.Show("Error","This feature need <a href=\"https://github.com/a2569875/lora-prompt-tool.git\" target=\"_blank\"><u>[LoRA Model Prompt Tool]</u></a> to work! but not installed!<br> Please download it at <a href=\"https://github.com/a2569875/lora-prompt-tool.git\" target=\"_blank\"><u>lora-prompt-tool</u></a> (https://github.com/a2569875/lora-prompt-tool.git)");
+				this.selectLanguage_btn.style.display = "none";
+				return;
+			}
+		}
+
+		this.translate_btn.on_off = opt;
+		if(this.translate_btn.on_off){
+			this.translate_btn.classList.add("oo-ui-image-progressive");
+			this.translate_icon.classList.add("oo-ui-weight-coloring");
+			this.selectLanguage_btn.style.display = "inline-block";
+			prompthighl.startTranslateTask();
+		}else{
+			this.translate_btn.classList.remove("oo-ui-image-progressive");
+			this.translate_icon.classList.remove("oo-ui-weight-coloring");
+			this.selectLanguage_btn.style.display = "none";
+			prompthighl.stopTranslateTask();
+		}
+		this.editor.renderer.updateText();
 	}
 	
 	TextboxController.prototype.createEditor = function() {
@@ -750,83 +819,81 @@ let prompthighl = {};
 		}})(this));
 
 		
-        try {
-            if(lorahelper){
-				this.translate_btn = document.createElement("span");
-				this.translate_btn.classList.add("oo-ui-iconElement-icon");
-				this.translate_icon = document.createElement("span");
-				this.translate_icon.classList.add("oo-ui-translate");
-				this.translate_icon.innerHTML = "文/A";
-				this.translate_btn.appendChild(this.translate_icon);
-				btn_frame = document.createElement("span");
-				btn_frame.classList.add("oo-ui-frame");
-				btn_frame.appendChild(this.translate_btn);
-				this.group_codeeditor_style.appendChild(btn_frame);
-				this.translate_btn.on_off = false;
-				this.translate_btn.addEventListener("click", (function(self){return function(event){
-					self.translate_btn.on_off = !self.translate_btn.on_off;
-					if(self.translate_btn.on_off){
-						self.translate_btn.classList.add("oo-ui-image-progressive");
-						self.translate_icon.classList.add("oo-ui-weight-coloring");
-						prompthighl.startTranslateTask();
-					}else{
-						self.translate_btn.classList.remove("oo-ui-image-progressive");
-						self.translate_icon.classList.remove("oo-ui-weight-coloring");
-						prompthighl.stopTranslateTask();
-					}
-					self.editor.renderer.updateText();
-				}})(this));
+		this.translate_btn = document.createElement("span");
+		this.translate_btn.classList.add("oo-ui-iconElement-icon");
+		this.translate_icon = document.createElement("span");
+		this.translate_icon.classList.add("oo-ui-translate");
+		this.translate_icon.innerHTML = "文/A";
+		this.translate_btn.appendChild(this.translate_icon);
+		btn_frame = document.createElement("span");
+		btn_frame.classList.add("oo-ui-frame");
+		btn_frame.appendChild(this.translate_btn);
+		this.group_codeeditor_style.appendChild(btn_frame);
+		this.translate_btn.on_off = false;
+		this.translate_btn.addEventListener("click", (function(self){return function(event){
+			self.updateTranslationEnable(!self.translate_btn.on_off);
+		}})(this));
 
-				//Create and append select list
-				this.selectLanguage = document.createElement("select");
-				this.selectLanguage.classList.add("wikiEditor-lang-selector")
-				this.selectLanguageLabel = document.createElement("span");
-				let selectLanguageDisplayWrap = document.createElement("span");
-				selectLanguageDisplayWrap.style.width = "50px";
-				selectLanguageDisplayWrap.style.position = "absolute";
-				selectLanguageDisplayWrap.style.overflow = "hidden";
-				btn_frame = document.createElement("span");
-				btn_frame.classList.add("oo-ui-frame");
-				btn_frame.style.width = "50px";
-				this.selectLanguage.style.width = "45px";
-				this.selectLanguage.style.position = "absolute";
-				this.selectLanguage.style.top = "0";
-				this.selectLanguage.style.background = "none";
-				this.selectLanguage.style.border = "none";
-				selectLanguageDisplayWrap.appendChild(this.selectLanguageLabel);
-				btn_frame.appendChild(selectLanguageDisplayWrap);
-				btn_frame.appendChild(this.selectLanguage);
-				this.group_codeeditor_style.appendChild(btn_frame);
+		//Create and append select list
+		this.selectLanguage = document.createElement("select");
+		this.selectLanguage.classList.add("wikiEditor-lang-selector")
+		this.selectLanguageLabel = document.createElement("span");
+		let selectLanguageDisplayWrap = document.createElement("span");
+		selectLanguageDisplayWrap.style.width = "50px";
+		selectLanguageDisplayWrap.style.position = "absolute";
+		selectLanguageDisplayWrap.style.overflow = "hidden";
+		btn_frame = document.createElement("span");
+		btn_frame.classList.add("oo-ui-frame");
+		btn_frame.style.width = "50px";
+		this.selectLanguage_btn = btn_frame;
+		this.selectLanguage.style.width = "45px";
+		this.selectLanguage.style.position = "absolute";
+		this.selectLanguage.style.top = "0";
+		this.selectLanguage.style.background = "none";
+		this.selectLanguage.style.border = "none";
+		selectLanguageDisplayWrap.appendChild(this.selectLanguageLabel);
+		btn_frame.appendChild(selectLanguageDisplayWrap);
+		btn_frame.appendChild(this.selectLanguage);
+		this.group_codeeditor_style.appendChild(btn_frame);
 
-				//Create and append the options
-				for (const [key, value] of Object.entries(prompthighl.languages)) {
-					var option = document.createElement("option");
-					option.value = key;
-					option.text = value;
-					this.selectLanguage.appendChild(option);
-				}
+		//Create and append the options
+		for (const [key, value] of Object.entries(prompthighl.languages)) {
+			var option = document.createElement("option");
+			option.value = key;
+			option.text = value;
+			option.setAttribute("title", value);
+			option.setAttribute("lang-name", value);
+			this.selectLanguage.appendChild(option);
+		}
 
-				this.LanguageIndexs = {};
-				const option_list = this.selectLanguage.querySelectorAll("option");
-				for(let i=0; i<option_list.length; ++i){
-					const option = option_list[i];
-					this.LanguageIndexs[option.value] = i;
-				}
-				const selected_Language = prompthighl.getLanguageFromOpts();
-				if(selected_Language){
-					this.selectLanguageLabel.innerHTML = selected_Language;
-					this.selectLanguage.selectedIndex = this.LanguageIndexs[selected_Language];
-				} else {
-					this.selectLanguageLabel.innerHTML = "";
-				}
-				this.selectLanguage.addEventListener("change", (function(self){return function(event){
-					const selected_Language = self.selectLanguage.value;
-					if (!selected_Language)
-						return;
-					self.selectLanguageLabel.innerHTML = selected_Language;
-				}})(this));
+		this.LanguageIndexs = {};
+		const option_list = this.selectLanguage.querySelectorAll("option");
+		for(let i=0; i<option_list.length; ++i){
+			const option = option_list[i];
+			this.LanguageIndexs[option.value] = i;
+		}
+		const selected_Language = prompthighl.getLanguageFromOpts();
+		this.old_selected_language = prompthighl.getLanguageFromOpts();
+		if(selected_Language){
+			this.selectLanguageLabel.innerHTML = selected_Language;
+			this.selectLanguage.selectedIndex = this.LanguageIndexs[selected_Language];
+		} else {
+			this.selectLanguageLabel.innerHTML = "";
+		}
+		this.selectLanguage.addEventListener("change", (function(self){return function(event){
+			const selected_Language = self.selectLanguage.value;
+			if (!selected_Language)
+				return;
+			let should_change = false;
+			if(self.selectLanguageLabel.innerHTML !== selected_Language){
+				should_change = true;
 			}
-        } catch (error) {}
+			self.selectLanguageLabel.innerHTML = selected_Language;
+			if(should_change){
+				self.editor.renderer.updateText();
+			}
+		}})(this));
+		this.selectLanguage_btn.style.display = "none";
 
 		//Create and append select list
 		this.selectTheme = document.createElement("select");
@@ -1219,6 +1286,12 @@ let prompthighl = {};
 						}
 					} , false);
 					ace.require("ace/ext/language_tools");
+					//AlertSystem
+					prompthighl.alerts = {
+						txt2img: new prompthighl.AlertSystem("txt2img"),
+						img2img: new prompthighl.AlertSystem("img2img"),
+					};
+
 					prompthighl.textboxList = [];
 					prompthighl.txt2img_prompt = gradioApp().querySelector("#txt2img_prompt textarea");
 					prompthighl.txt2img_neg_prompt = gradioApp().querySelector("#txt2img_neg_prompt textarea");

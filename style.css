@@ -20,6 +20,49 @@
     background-color: var(--background-fill-primary);
 }
 
+.wikiEditor-lang-selector optgroup, .wikiEditor-lang-selector option {
+    background-color: var(--background-fill-primary);
+}
+
+.oo-ui-alert-area {
+    position: absolute;
+    width: 90%;
+    z-index: 100;
+}
+
+.oo-ui-alert-box {
+    padding: 20px;
+    background-color: #4d4d4d;
+    color: white;
+    opacity: 0.83;
+    transition: opacity 0.5s;
+    margin-bottom: 15px;
+}
+.oo-ui-alert-box.error {background-color: #f44336;}
+.oo-ui-alert-box.success {background-color: #04AA6D;}
+.oo-ui-alert-box.info {background-color: #2196F3;}
+.oo-ui-alert-box.warning {background-color: #ff9800;}
+
+.oo-ui-alert-box strong{
+    margin: 20px;
+    font-size: 1.5em;
+}
+
+.oo-ui-alert-closebtn {
+    padding-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 20px;
+    line-height: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .oo-ui-alert-closebtn:hover {
+    color: black;
+  }
+
 .ace_color.data-color{
     position: relative;
 }

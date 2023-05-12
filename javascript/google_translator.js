@@ -4,6 +4,7 @@ function module_init() {
 	prompthighl.translates = {};
     prompthighl.googletranslates = {};
     prompthighl.translatequeue = [];
+    prompthighl.translatequeue_slow = [];
 
     prompthighl.stopTranslateTask = function(){
         if(prompthighl.translateTask){
@@ -35,8 +36,67 @@ function module_init() {
                         prompthighl.call(word_obj.call_back, result);
                     }})(lang_word));
                 }
+                return;
+            }
+            if (prompthighl.translatequeue_slow.length > 0){
+                const lang_word = prompthighl.translatequeue_slow.shift();
+                if(lang_word){
+                    google_translate(lang_word.word, { from: "en", to: lang_word.lang_code })
+                    .then((function(word_obj){return res => {
+                        const word = word_obj.word;
+                        const lang_code = word_obj.lang_code;
+                        const result = res.text;
+                        if(prompthighl.is_empty(prompthighl.googletranslates[word])){
+                            prompthighl.googletranslates[word] = {};
+                        }
+                        prompthighl.googletranslates[word][lang_code] = result;
+                        prompthighl.call(word_obj.call_back, result);
+                    }})(lang_word));
+                }
+                return;
             }
         },500);
+    }
+    prompthighl.load_translate = function(word, lang_code, call_back) {
+        if(lang_code === "en") {
+            prompthighl.call(call_back, word);
+            return;
+        }
+        if(!prompthighl.is_empty(prompthighl.translates[word])){
+            if(!prompthighl.is_empty(prompthighl.translates[word][lang_code])){
+                prompthighl.call(call_back, prompthighl.translates[word][lang_code]);
+            }
+        }
+        prompthighl.call(call_back, word);
+    }
+    prompthighl.get_translate = function(word, lang_code, call_back) {
+        if(lang_code === "en") {
+            prompthighl.call(call_back, word);
+            return;
+        }
+        if(!prompthighl.is_empty(prompthighl.translates[word])){
+            if(!prompthighl.is_empty(prompthighl.translates[word][lang_code])){
+                prompthighl.call(call_back, prompthighl.translates[word][lang_code]);
+            }
+        }
+        if(prompthighl.is_empty(prompthighl.googletranslates[word+" language"])){
+            prompthighl.googletranslates[word+" language"] = {};
+            prompthighl.translatequeue_slow.push({
+                word: word+" language",
+                lang_code: lang_code,
+                call_back: call_back
+            });
+            return;
+        }
+        if(prompthighl.is_empty(prompthighl.googletranslates[word+" language"][lang_code])){
+            prompthighl.translatequeue_slow.push({
+                word: word+" language",
+                lang_code: lang_code,
+                call_back: call_back
+            });
+            return;
+        }
+        prompthighl.call(call_back, prompthighl.googletranslates[word+" language"][lang_code]);
     }
 
     prompthighl.add_translate = function(word, lang_code, call_back) {
