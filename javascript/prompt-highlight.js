@@ -338,7 +338,6 @@ let prompthighl = {};
 				element:first_node
 			});
 		}
-		const background_color = document.defaultView.getComputedStyle(this.editor.container, null).getPropertyValue('background-color');
 		for(let trans of trans_list){
 			let lang_code = this.selectLanguage.value;
 			if(((trans.element.getAttribute("data-translate-orig")||"").trim()===trans.text.trim()) && 
@@ -354,10 +353,6 @@ let prompthighl = {};
 							css.replace(/(data\-translate\s*\:\s*[^;]+);/g, `data-translate: '${translated.replace(/(["'])/g, "\\$1")}';`);
 						else css += 
 							`--data-translate: '${translated.replace(/(["'])/g, "\\$1")}';`;
-						if (css.indexOf("data-background-color") >= 0)css = 
-							css.replace(/(data\-background\-color\s*\:\s*[^;]+);/g, `data-background-color: '${background_color}';`);
-						else css += 
-							`--data-background-color: ${background_color};`;
 						trans_obj.element.style.cssText = css;
 						trans_obj.element.classList.add("ace_translated_token");
 					};
@@ -393,7 +388,7 @@ let prompthighl = {};
 			},
 			"[":{
 				query: ".ace_promptstep.ace_keyword.ace_begin",
-				base_weight: 0.952,
+				base_weight: 0.9,
 				begin_pattern: "[",
 				end_pattern: "]",
 				bad_pattern: /\s*\:[^\]]+\]\s*$|\|/
@@ -573,8 +568,10 @@ let prompthighl = {};
 		} else {
 			this.editor.setTheme("ace/theme/chrome");
 			this.selectThemeLabel.innerHTML = this.themeDist.chrome;
+			this.selectTheme.selectedIndex = this.themeIndexs.chrome;
 		}
 		this.editor.renderer.updateText();
+		this.updateTheme();
 	}
 
 	TextboxController.prototype.updateEnable = function(opt) {
@@ -704,6 +701,25 @@ let prompthighl = {};
 		this.editor.renderer.updateText();
 	}
 	
+	TextboxController.prototype.is_dark = function() {
+		const selectedTheme = this.selectTheme.value;
+		if (!selectedTheme)
+			return prompthighl.is_dark();
+		const theme_obj = this.themeLookupDist[selectedTheme];
+		if (!theme_obj)
+			return prompthighl.is_dark();
+		return !!(theme_obj.isDark);
+	}
+
+	TextboxController.prototype.updateTheme = function() {
+		if(prompthighl.is_dark() && prompthighl.is_dark() !== this.is_dark()){
+			this.smyles_editor_wrap.classList.add("ace_revert_theme");
+
+		} else {
+			this.smyles_editor_wrap.classList.remove("ace_revert_theme");
+		}
+	}
+
 	TextboxController.prototype.createEditor = function() {
 		this.editor_div = document.createElement("div");
 		this.smyles_dragbar = document.createElement("div");
@@ -922,6 +938,8 @@ let prompthighl = {};
 		Dark_group.setAttribute("label", "Dark")
 		this.selectTheme.appendChild(Dark_group);
 		this.themeDist = {};
+		this.themeLookupDist = {};
+
 		this.do_theme = window.setInterval((function(self, BrightGroup, DarkGroup){return function(){
 			var themelist = ace.require("ace/ext/themelist");
 			if(themelist){
@@ -931,6 +949,7 @@ let prompthighl = {};
 					option.value = x.name;
 					option.text = x.caption;
 					self.themeDist[option.value] = option.text;
+					self.themeLookupDist[option.value] = x;
 					(x.isDark ? DarkGroup : BrightGroup).appendChild(option);
 				});
 				self.themeIndexs = {};
@@ -947,6 +966,7 @@ let prompthighl = {};
 				} else {
 					self.editor.setTheme("ace/theme/chrome");
 					self.selectThemeLabel.innerHTML = self.themeDist.chrome;
+					self.selectTheme.selectedIndex = self.themeIndexs.chrome;
 				}
 				window.clearInterval(self.do_theme);
 				self.updateOpt();
@@ -958,6 +978,7 @@ let prompthighl = {};
 				return;
 			self.selectThemeLabel.innerHTML = self.themeDist[selectedTheme];
 			self.editor.setTheme("ace/theme/" + selectedTheme);
+			self.updateTheme();
 			self.editor.renderer.updateText();
 		}})(this));
 
@@ -965,6 +986,7 @@ let prompthighl = {};
 		this.smyles_dragbar.style.opacity = "1";
 		
 		this.textArea.parentNode.prepend(this.smyles_dragbar);
+
 		// replace textarea with the editor
 		this.smyles_editor_wrap.appendChild(this.editor_div);
 		this.textArea.parentNode.prepend(this.smyles_editor_wrap);
@@ -1029,6 +1051,14 @@ let prompthighl = {};
 		const { renderer } = this.editor;
 		renderer.on('afterRender', (function(self){ 
 			return function(event) {
+				$ace_line = $(self.editor.container.querySelectorAll(".ace_line"));
+				const background_color = document.defaultView.getComputedStyle(self.editor.container, null).getPropertyValue('background-color');
+				$ace_line.css("--data-background-color",background_color);
+				if(self.is_dark()){
+					$ace_line.addClass("ace_dark_theme");
+				} else {
+					$ace_line.removeClass("ace_dark_theme");
+				}
 				if(self.weight_coloring_btn.on_off){
 					self.activeWeightColoring();
 				}
@@ -1104,7 +1134,7 @@ let prompthighl = {};
 					color_elements[i].element.classList.add("ace_color");
 				}
 
-				const background_color = document.defaultView.getComputedStyle(self.editor.container, null).getPropertyValue('background-color');
+				
 				for(const escape of self.editor.container.querySelectorAll(".ace_charescape")){
 					let escape_inner = escape.textContent || escape.innerText || escape.innerHTML;
 					if((""+(escape_inner||"")).trim() === "") continue;
@@ -1117,7 +1147,7 @@ let prompthighl = {};
 					   return '\\'+i;
 					});
 					escape.classList.add("ace_charescape_data");
-					escape.style.cssText = `--data-charescape: '${parsed}';--data-background-color: ${background_color}`;
+					escape.style.cssText = `--data-charescape: '${parsed}';`;
 				}
 
 			}

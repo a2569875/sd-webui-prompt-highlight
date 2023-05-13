@@ -82,6 +82,7 @@ function module_init() {
         }
         return JSON.parse(JSON.stringify(result).replace(/\\\\/g,"\\"));
     }
+    prompthighl.is_dark = ()=>!!(document.querySelector(".dark") || gradioApp().querySelector(".dark"));
 
     prompthighl.call = function(func, ...theArgs){
         if(typeof(func) === typeof(prompthighl.noop_func)){
