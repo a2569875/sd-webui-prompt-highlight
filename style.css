@@ -234,6 +234,21 @@
 .dark .ace_revert_theme .ace_search {
     filter: hue-rotate( 0deg );
 }
+.dark .oo-ui-icon-markup, .dark .mw-ui-icon-markup::before {
+    filter: invert( 1 ) hue-rotate( 180deg );
+}
+.dark .oo-ui-image-progressive.oo-ui-icon-markup, .dark .mw-ui-icon-markup-progressive::before {
+    filter: invert( 1 ) hue-rotate( 180deg );
+}
+.dark .oo-ui-icon-pilcrow {
+    filter: invert( 1 ) hue-rotate( 180deg );
+}
+.dark .oo-ui-image-progressive.oo-ui-icon-pilcrow {
+    filter: invert( 1 ) hue-rotate( 180deg );
+}
+.dark .oo-ui-icon-promptSearch, .dark .mw-ui-icon-promptSearch::before {
+    filter: invert( 1 ) hue-rotate( 180deg );
+}
 
 .oo-ui-iconElement-icon {
     background-size: contain;
