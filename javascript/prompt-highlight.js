@@ -874,10 +874,11 @@ let prompthighl = {};
 		//Create and append the options
 		for (const [key, value] of Object.entries(prompthighl.languages)) {
 			var option = document.createElement("option");
+			const lang_data = !!(value.name) ? value : {name: value};
 			option.value = key;
-			option.text = value;
-			option.setAttribute("title", value);
-			option.setAttribute("lang-name", value);
+			option.text = lang_data.display ? `${key} - ${lang_data.display} (${lang_data.name})` : lang_data.name;
+			option.setAttribute("title", lang_data.display ? lang_data.display : lang_data.name);
+			option.setAttribute("lang-name", lang_data.name);
 			this.selectLanguage.appendChild(option);
 		}
 

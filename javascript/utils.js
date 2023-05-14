@@ -83,18 +83,34 @@ function module_init() {
         return JSON.parse(JSON.stringify(result).replace(/\\\\/g,"\\"));
     }
 
+    prompthighl.optionalIndex = x => Number.isFinite(parseFloat(x)) ? parseInt(x) : -1;
+
     prompthighl.load_extra_network = function(call_back){
         if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3)prompthighl.call(call_back);
-        let time_obj = {call_back:call_back};
+        txt2img_extra_networks = document.querySelector("#txt2img_extra_networks");
+        txt2img_extra_networks.style.display = "none";
+        let fake_btn = document.createElement("button");
+        fake_btn.className = "lg secondary gradio-button tool svelte-1ipelgc";
+        fake_btn.innerHTML = "🎴";
+        txt2img_extra_networks.parentElement.insertBefore(fake_btn, txt2img_extra_networks);
+        let time_obj = {call_back:call_back, fake_btn:fake_btn};
+        fake_btn.addEventListener("click",function(event){
+            time_obj.should_enable = !time_obj.should_enable;
+            if(time_obj.should_enable && time_obj.tab){
+                document.querySelector('div#txt2img_extra_networks').parentElement.style.display = "block";
+            }
+        })
         time_obj.pid = window.setInterval((function(self){
             return function(){
                 if(self.process_tail && Math.abs((self.process_tail_id||0)-(self.counter||0)) >= 2){
                     self.tab.parentElement.style.display = "block";
+                    self.btn.style.display = "inherit";
+                    self.fake_btn.style.display = "none";
                     window.clearInterval(self.pid);
                     return;
                 }
                 if(self.counter <= 2 && document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3){
-                    if(self.enable && self.btn){
+                    if(self.enable && self.btn && !self.should_enable){
                         self.btn.click();
                         ++self.click;
                         self.enable = !self.enable;
@@ -116,7 +132,7 @@ function module_init() {
                 if(!self.btn) return;
                 if(self.counter <= 2)return;
                 if(self.done){
-                    if(self.enable){
+                    if(self.enable && !self.should_enable){
                         self.btn.click();
                         ++self.click;
                         self.enable = !self.enable;
