@@ -451,6 +451,7 @@ function module_init() {
                 window.clearInterval(try_localization);
             }
         } catch (error) {
+            console.log(error);
             console.log(error.stack);
         }
     },10);

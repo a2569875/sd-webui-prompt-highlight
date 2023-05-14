@@ -1,8 +1,8 @@
 let prompthighl = {};
 (function(){
 	let drag_list = [];
-	let extranetworkList = [];
-	let extranetworkTable = {};
+	prompthighl.extranetworkList = [];
+	prompthighl.extranetworkTable = {};
 	var wpoffset = 0;
 
 	const has_lorahelper = ()=>{try{return !!(lorahelper?.show_trigger_words)}catch(ex){return false;}};
@@ -151,7 +151,7 @@ let prompthighl = {};
 		function check_start(input, pattern){
 			return input.trim().startsWith(pattern);
 		}
-		if(extranetworkTable?.textual_inversion && ((extranetworkTable?.ti_pattern)||"").trim()!==""){
+		if(prompthighl.extranetworkTable?.textual_inversion && ((prompthighl.extranetworkTable?.ti_pattern)||"").trim()!==""){
 			let node_ptr = (((this.editor.container.querySelector(".ace_text-layer")?.childNodes||[])[0]?.childNodes||[])[0]?.childNodes||[])[0];
 			let node_list = [];
 			for(let ptr = node_ptr; ptr !== null && typeof(ptr) !== typeof(undefined); ptr = next_element(ptr)) {
@@ -162,7 +162,7 @@ let prompthighl = {};
 					for(const token of tokens){
 						const trim_token = token.trim();
 						if(trim_token === "")continue;
-						if(extranetworkTable.ti_pattern.indexOf(trim_token) >= 0){
+						if(prompthighl.extranetworkTable.ti_pattern.indexOf(trim_token) >= 0){
 							node_list.push(ptr);
 							break;
 						}
@@ -175,7 +175,7 @@ let prompthighl = {};
 				let ptr_inner = ptr.textContent || ptr.innerText || ptr.innerHTML;
 				let new_node = ptr;
 				let html = ptr_inner.replace(/[^,\s]+|[,\:\|]/g,function(str){
-					if(extranetworkTable.ti_pattern.indexOf(str)>-1||str===","||str===":"||str==="|")return `<span class="ace_maybeti">${str}</span>`;
+					if(prompthighl.extranetworkTable.ti_pattern.indexOf(str)>-1||str===","||str===":"||str==="|")return `<span class="ace_maybeti">${str}</span>`;
 					return str;
 				});
 				if (ptr.nodeType === Node.TEXT_NODE){
@@ -205,7 +205,7 @@ let prompthighl = {};
 						continue;
 					}
 					if(ti_name === ""){
-						for (const [key, value] of Object.entries(extranetworkTable.textual_inversion)) {
+						for (const [key, value] of Object.entries(prompthighl.extranetworkTable.textual_inversion)) {
 							if(key.indexOf(ptr_inner) == 0){
 								ti_name = ptr_inner;
 								should_add = false;
@@ -215,7 +215,7 @@ let prompthighl = {};
 					}
 					if(should_add)ti_name += ptr_inner;
 					element_list.push(ptr);
-					if(extranetworkTable.textual_inversion[ti_name]){
+					if(prompthighl.extranetworkTable.textual_inversion[ti_name]){
 						elements.push({
 							name: ti_name,
 							elements: element_list
@@ -227,7 +227,7 @@ let prompthighl = {};
 				}
 			}
 			for(const element of elements){
-				if(extranetworkTable.textual_inversion[element.name]){
+				if(prompthighl.extranetworkTable.textual_inversion[element.name]){
 					let $element = $(element.elements);
 					if($element.attr("data-hasevent")==="yes") continue;
 					$element.addClass( "ace_variable ace_language" );
@@ -235,7 +235,7 @@ let prompthighl = {};
 					if(has_lorahelper()) {
 						$element.on( "dblclick", (function(self, select_tab) {return function(event){
 							lorahelper.show_trigger_words(event, "ti", self.path, self.name, self.image, select_tab);
-						}})(extranetworkTable.textual_inversion[element.name], active_tab) );
+						}})(prompthighl.extranetworkTable.textual_inversion[element.name], active_tab) );
 					}
 					$element.css("pointer-events", "all");
 				}
@@ -263,8 +263,8 @@ let prompthighl = {};
 			const checker = data_map[inv_hypermap[hyper_name]];
 			if(checker){
 				const m_type = inv_hypermap[hyper_name];
-				if(extranetworkTable[m_type]){
-					const extra_item = extranetworkTable[m_type][network_name];
+				if(prompthighl.extranetworkTable[m_type]){
+					const extra_item = prompthighl.extranetworkTable[m_type][network_name];
 					let $element = $(elements);
 					if($element.attr("data-hasevent")==="yes") continue;
 					$element.attr("data-hasevent", "yes");
@@ -640,7 +640,6 @@ let prompthighl = {};
 		if(opt === this.old_selected_language) return;
 		this.old_selected_language = prompthighl.getLanguageFromOpts();
 		const selected_Language = opt;
-		console.log(selected_Language);
 		if(selected_Language && ((this.LanguageIndexs[selected_Language]||-1) >= 0)){
 			this.selectLanguageLabel.innerHTML = selected_Language;
 			let should_change = false;
@@ -1214,21 +1213,35 @@ let prompthighl = {};
 	}
 
 	function update_extranetworkTable(){
-		for(const enw of extranetworkList){
-			if(!extranetworkTable[enw.type])extranetworkTable[enw.type]={};
-			extranetworkTable[enw.type][enw.name]=enw;
+		for(const enw of prompthighl.extranetworkList){
+			if(!prompthighl.extranetworkTable[enw.type])prompthighl.extranetworkTable[enw.type]={};
+			prompthighl.extranetworkTable[enw.type][enw.name]=enw;
 		}
-		if(extranetworkTable.textual_inversion){
+		if(prompthighl.extranetworkTable.textual_inversion){
 			let ti_pattern = "";
-			for (const [key, value] of Object.entries(extranetworkTable.textual_inversion)) {
+			for (const [key, value] of Object.entries(prompthighl.extranetworkTable.textual_inversion)) {
 				ti_pattern += (ti_pattern === "" ? "" : "|") + value.name;
 			}
-			extranetworkTable.ti_pattern = ti_pattern;
+			prompthighl.extranetworkTable.ti_pattern = ti_pattern;
 		}
 	}
 	onUiLoaded(() => {
 		loadColorList();
-
+		if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length <= 0){
+			if(!prompthighl.loading_extra_network){
+				prompthighl.loading_extra_network = true;
+				prompthighl.load_extra_network(()=>{
+					prompthighl.extranetworkList = getAllExtranetwork();
+					update_extranetworkTable();
+					for(let update_btn of document.querySelectorAll("#txt2img_extra_refresh, #img2img_extra_refresh")){
+						update_btn.addEventListener("click",function(event){
+							prompthighl.extranetworkList = getAllExtranetwork();
+							update_extranetworkTable();
+						});
+					}
+				})
+			}
+		}
 		const check_css = document.querySelectorAll("link");
 		let find_css = false;
 		let req_str = ext_path.split("=");
@@ -1250,11 +1263,11 @@ let prompthighl = {};
 			link.media = 'all';
 			head.appendChild(link);
 		}
-		extranetworkList = getAllExtranetwork();
+		prompthighl.extranetworkList = getAllExtranetwork();
 		update_extranetworkTable();
 		for(let update_btn of document.querySelectorAll("#txt2img_extra_refresh, #img2img_extra_refresh")){
 			update_btn.addEventListener("click",function(event){
-				extranetworkList = getAllExtranetwork();
+				prompthighl.extranetworkList = getAllExtranetwork();
 				update_extranetworkTable();
 			});
 		}
@@ -1321,6 +1334,7 @@ let prompthighl = {};
 						txt2img: new prompthighl.AlertSystem("txt2img"),
 						img2img: new prompthighl.AlertSystem("img2img"),
 					};
+					
 
 					prompthighl.textboxList = [];
 					prompthighl.txt2img_prompt = gradioApp().querySelector("#txt2img_prompt textarea");

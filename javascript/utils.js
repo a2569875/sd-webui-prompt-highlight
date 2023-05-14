@@ -82,6 +82,68 @@ function module_init() {
         }
         return JSON.parse(JSON.stringify(result).replace(/\\\\/g,"\\"));
     }
+
+    prompthighl.load_extra_network = function(call_back){
+        if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3)prompthighl.call(call_back);
+        let time_obj = {call_back:call_back};
+        time_obj.pid = window.setInterval((function(self){
+            return function(){
+                if(self.process_tail && Math.abs((self.process_tail_id||0)-(self.counter||0)) >= 2){
+                    self.tab.parentElement.style.display = "block";
+                    window.clearInterval(self.pid);
+                    return;
+                }
+                if(self.counter <= 2 && document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3){
+                    if(self.enable && self.btn){
+                        self.btn.click();
+                        ++self.click;
+                        self.enable = !self.enable;
+                    }
+                    if(!self.process_tail){
+                        self.process_tail = true;
+                        self.process_tail_id = self.counter;
+                    }
+                    prompthighl.call(self.call_back);
+                    return;
+                }
+                self.counter = (!self.counter) ? 0 : self.counter;
+                ++self.counter;
+                if(self.process_tail) return;
+
+                self.tab = document.querySelector('div#txt2img_extra_networks');
+                if(!self.tab) return;
+                self.btn = document.querySelector("#txt2img_extra_networks");
+                if(!self.btn) return;
+                if(self.counter <= 2)return;
+                if(self.done){
+                    if(self.enable){
+                        self.btn.click();
+                        ++self.click;
+                        self.enable = !self.enable;
+                    }
+                    if(!self.process_tail){
+                        self.process_tail = true;
+                        self.process_tail_id = self.counter;
+                    }
+                    prompthighl.call(self.call_back);
+                    return;
+                }
+                self.tab.parentElement.style.display = "none";
+                self.click = (!self.click) ? 0 : self.click;
+                if(!self.enable && !self.done){
+                    self.btn.click();
+                    ++self.click;
+                    self.enable = !self.enable;
+                }
+                if (self.click >= 1){
+                    if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3){
+                        self.done = true;
+                    }
+                }
+            };
+        })(time_obj),100);
+    }
+
     prompthighl.is_dark = ()=>!!(document.querySelector(".dark") || gradioApp().querySelector(".dark"));
 
     prompthighl.call = function(func, ...theArgs){
