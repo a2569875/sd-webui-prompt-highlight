@@ -626,7 +626,8 @@ let prompthighl = {};
 
 	TextboxController.prototype.updateFontSize = function(opt) {
 		let self = this;
-		if ((""+self.font_size.value).trim() === (""+opt).trim()) return;
+		if ((""+self.old_font_size).trim() === (""+opt).trim()) return;
+		self.old_font_size = opt;
 		self.font_size.value = opt;
 		const font_size = parseFloat(opt)
 		if(Number.isFinite(font_size)){
