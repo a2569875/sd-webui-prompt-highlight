@@ -1228,16 +1228,45 @@ let prompthighl = {};
 	}
 	onUiLoaded(() => {
 		loadColorList();
+		let working_data = {};
+		let lorahelper_observer = new MutationObserver((function(){
+			return mutations => {
+				const checker = getAllExtranetwork();
+				let not_same = false;
+				if (checker.length <= 0 && prompthighl.extranetworkList.length > 0) return;
+				if (checker.length !== prompthighl.extranetworkList.length) not_same = true;
+				if (!not_same) for(const i of checker){
+					if(!((prompthighl.extranetworkTable[i.type]||{})[i.name])){
+						not_same = true;
+						break;
+					}
+				}
+				if(!not_same) return;
+				if(working_data.working) return;
+				if(mutations.length <= 0) return;
+				working_data.working = true;
+				prompthighl.extranetworkList = checker;
+				update_extranetworkTable();
+				working_data.working = false;
+			}
+		})() );
+		lorahelper_observer.observe(document.querySelector("div#txt2img_extra_networks").parentElement, {
+			characterData: true,
+			childList: true,
+			subtree: true,
+			attributes: true
+		});
 		if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length <= 0){
 			if(!prompthighl.loading_extra_network){
 				prompthighl.loading_extra_network = true;
 				prompthighl.load_extra_network(()=>{
-					prompthighl.extranetworkList = getAllExtranetwork();
-					update_extranetworkTable();
 					for(let update_btn of document.querySelectorAll("#txt2img_extra_refresh, #img2img_extra_refresh")){
 						update_btn.addEventListener("click",function(event){
+							if(working_data.working) return;
+							working_data.working = true;
 							prompthighl.extranetworkList = getAllExtranetwork();
 							update_extranetworkTable();
+							working_data.working = false;
 						});
 					}
 				})
@@ -1268,8 +1297,11 @@ let prompthighl = {};
 		update_extranetworkTable();
 		for(let update_btn of document.querySelectorAll("#txt2img_extra_refresh, #img2img_extra_refresh")){
 			update_btn.addEventListener("click",function(event){
+				if(working_data.working) return;
+				working_data.working = true;
 				prompthighl.extranetworkList = getAllExtranetwork();
 				update_extranetworkTable();
+				working_data.working = false;
 			});
 		}
 		loadScript([ext_path, "ace", "ace.js"].join("/"), ()=>{
