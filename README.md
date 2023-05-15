@@ -5,6 +5,8 @@
 
 ![](readme/fig1.png)
 
+[![Stable Diffusion WebUI Prompt Highlight Plugin](https://res.cloudinary.com/marcomontalbano/image/upload/v1684166740/video_to_markdown/images/youtube--j1BOl0ThkgY-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=j1BOl0ThkgY "Stable Diffusion WebUI Prompt Highlight Plugin")
+
 ### Language
 * [繁體中文](README.zh-tw.md)  
 
