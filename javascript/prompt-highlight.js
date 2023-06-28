@@ -1432,8 +1432,16 @@ let prompthighl = {};
 							}, false);
 						}
 					}
-					if(opts.prompt_highlight_enabled) apply_textbox();
-
+					
+					let do_textbox = window.setInterval(()=>{
+						if(typeof(opts.prompt_highlight_enabled) !== typeof(undefined)){
+							if(opts.prompt_highlight_enabled){
+								console.log("loading textbox...");
+								apply_textbox();
+							}
+							window.clearInterval(do_textbox);
+						}
+					},50);
 
 				});
 			}
