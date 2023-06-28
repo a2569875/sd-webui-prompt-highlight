@@ -36,11 +36,12 @@ class Script(scripts.Script):
         pass
 
     def process(self, p: StableDiffusionProcessing):
-        original_prompt, original_negative_prompt = scripts_utils.get_prompts(p)
-        prompts = [original_prompt if original_prompt is not None else ""] if isinstance(original_prompt, str) else original_prompt
-        negative_prompts = [original_negative_prompt if original_negative_prompt is not None else ""] if isinstance(original_negative_prompt, str) else original_negative_prompt
-        p.all_prompts = scripts_utils.replaceColorPrompt(prompts)
-        p.all_negative_prompts = scripts_utils.replaceColorPrompt(negative_prompts)
-        p.prompt_for_display = original_prompt
-        p.prompt = original_prompt
+        if p.prompt:
+            p.prompt = scripts_utils.replaceColorPrompt([p.prompt])[0]
+        if p.negative_prompt:
+            p.negative_prompt = scripts_utils.replaceColorPrompt([p.negative_prompt])[0]
+        if p.all_prompts:
+            p.all_prompts = scripts_utils.replaceColorPrompt(p.all_prompts)
+        if p.all_negative_prompts:
+            p.all_negative_prompts = scripts_utils.replaceColorPrompt(p.all_negative_prompts)
 

@@ -11,14 +11,15 @@ def getColor():
         color_json = json.load(f)
         return color_json
 
-def get_prompts(p):
-    original_prompt = p.all_prompts[0] if len(p.all_prompts) > 0 else p.prompt
-    original_negative_prompt = (
-        p.all_negative_prompts[0]
-        if len(p.all_negative_prompts) > 0
-        else p.negative_prompt
-    )
+def _get_effective_prompt(prompts: list[str], prompt: str) -> str:
+    return prompts[0] if prompts else prompt
 
+def get_prompts(p):
+    original_prompt = _get_effective_prompt(p.all_prompts, p.prompt)
+    original_negative_prompt = _get_effective_prompt(
+        p.all_negative_prompts,
+        p.negative_prompt,
+    )
     return original_prompt, original_negative_prompt
 
 re_color_def = re.compile(r"\(\s*([\+\-]?[\d\.]+)\s*,\s*([\+\-]?[\d\.]+)\s*,\s*([\+\-]?[\d\.]+)\s*\)")
