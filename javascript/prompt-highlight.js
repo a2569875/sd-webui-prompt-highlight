@@ -1251,7 +1251,7 @@ let prompthighl = {};
 				working_data.working = false;
 			}
 		})() );
-		lorahelper_observer.observe(document.querySelector("div#txt2img_extra_networks").parentElement, {
+		lorahelper_observer.observe(document.querySelector("div#txt2img_extra_networks, div#txt2img_extra_tabs").parentElement, {
 			characterData: true,
 			childList: true,
 			subtree: true,

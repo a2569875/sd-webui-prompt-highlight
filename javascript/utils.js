@@ -88,6 +88,10 @@ function module_init() {
     prompthighl.load_extra_network = function(call_back){
         if(document.querySelectorAll('.extra-network-cards,.extra-network-thumbs').length >= 3)prompthighl.call(call_back);
         txt2img_extra_networks = document.querySelector("#txt2img_extra_networks");
+        if ((txt2img_extra_networks||null) == null){
+            prompthighl.call(call_back);
+            return;
+        }
         txt2img_extra_networks.style.display = "none";
         let fake_btn = document.createElement("button");
         fake_btn.className = "lg secondary gradio-button tool svelte-1ipelgc";
